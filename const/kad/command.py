@@ -1,0 +1,4 @@
+PING = 0
+STORE = 1
+FIND_NODE = 2
+FIND_VALUE = 3
