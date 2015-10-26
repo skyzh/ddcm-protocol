@@ -1,8 +1,13 @@
 class Node:
-    def __init__(self, id, destination=None):
+    def __init__(self, id, remote=None):
+        """Node
+
+        Args:
+            id: Node id, a bytes object
+        """
         self.id = id
-        self.destination = destination
-        self.hash = int.from_bytes(tmpid, byteorder="big")
+        self.remote = remote
+        self.hash = int.from_bytes(id, byteorder="big")
 
     def distance(self, node):
-        return self.long_id ^ node.long_id
+        return self.hash ^ node.hash
