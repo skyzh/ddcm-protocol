@@ -46,7 +46,7 @@ class KademliaProtocol:
 
     async def _handle_store(self, echo, remoteNode, data):
         pass
-        
+
     async def _handle_findNode(self, echo, remoteNode, data):
         pass
 
@@ -74,3 +74,6 @@ class KademliaProtocol:
             await self._handle_findValue(echo, remoteNode, data)
         elif command == const.kad.command.PONG:
             await self._handle_pong(echo, remoteNode, data)
+        else:
+            # Handle Unknown Command
+            pass
