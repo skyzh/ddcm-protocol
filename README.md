@@ -1,12 +1,14 @@
 # Kademlia-Async
 
-Use Kademlia in Python Asyncio
+Kademlia is a peer-to-peer network.
+
+Use Kademlia with Python Asyncio.
 
 Inspired by [bmuller/kademlia](https://github.com/bmuller/kademlia)
 
 ## License
 
-The new BSD
+BSD-Clause-3
 
 ## Test
 
@@ -37,3 +39,7 @@ Hash is number data of ID.
 ## RPC
 
 RPC Module helps organize message in a structure.
+
+## Protocol
+
+Protocol handles new connections and call callback in server object.

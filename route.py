@@ -35,6 +35,6 @@ class Route:
             return
         elif bucket.hasInRange(self.node) or bucket.depth() % 5 != 0:
             self.splitBucket(index)
-            self.addoNode(node)
+            self.addNode(node)
         else:
             self.protocol.callPing(bucket.firstNode())

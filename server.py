@@ -6,6 +6,16 @@ import random
 
 class KademliaServer(object):
     def __init__(self, ksize=20, alpha=3, node=None, host="127.0.0.1", port=8654, loop=None, rpc=None):
+        """Init
+
+        Args:
+            kbucket: KBucket Object
+            alpha: Parallel Operations
+            node: Self Node
+            remote: Server Address
+            loop: Loop Object
+            rpc: RPC Message Object
+        """
         self.ksize = ksize
         self.alpha = alpha
         self.node = node
@@ -38,7 +48,7 @@ class KademliaServer(object):
         reader, writer = await remote.open_connection(self.loop)
         await self.protocol._do_ping(writer)
         writer.close()
-        
+
     async def store(self, key, value):
         """Store
 

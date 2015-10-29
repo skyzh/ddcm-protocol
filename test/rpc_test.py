@@ -2,9 +2,9 @@
 import sys
 sys.path.append("..")
 
-import rpc
 import asyncio
 
+import utils
 from protocol import KademliaProtocol
 from rpc import KademliaRPC
 from server import KademliaServer
@@ -17,13 +17,13 @@ def test_rpc(loop):
 
     server_server = KademliaServer(
         loop=loop,
-        node=Node(bytes(random.getrandbits(8) for i in range(20))),
+        node=Node(utils.get_random_node_id()),
         rpc=KademliaRPC()
     )
 
     server_client = KademliaServer(
         loop=loop,
-        node=Node(bytes(random.getrandbits(8) for i in range(20))),
+        node=Node(utils.get_random_node_id()),
         port=8175,
         rpc=KademliaRPC()
     )
