@@ -10,6 +10,15 @@ Todo
 
 A Kademlia Service contains a Server, KBucket, Protocol, RPC and Settings.
 
+    Service(config)
+        - TCPServer
+        - UDPServer
+        - KademliaInterface
+        - Protocol
+        - RPC
+        - KBucket
+        - Storage
+
 ## KBucket
 
 A Bucket storing peer information.
@@ -45,4 +54,3 @@ Also function of republishing key hasn't be introduced.
     ./kademlia-cli -c ~/.config/kademlia/config.json
     ./kad-cli1 (alias of kademlia-cli, loading config from cli1.json)
 
-然而这一切都是幻想。鬼知道能不能实现。

@@ -1,41 +1,58 @@
-from protocol import KademliaProtocol
-import asyncio
-from remote import Remote
-import utils
 import random
+import asyncio
 
-class KademliaServer(object):
-    def __init__(self, ksize=20, alpha=3, node=None, host="127.0.0.1", port=8654, loop=None, rpc=None):
+import const
+import utils
+
+from Protocol import Protocol
+from Remote import Remote
+
+class TCPServer(object):
+"""TCP Server
+
+Provides TCP Protocol for Kademlia Service.
+
+Func:
+    ping, store, findValue, findNode: Call Remote Peer in these commands
+                                      in TCP Protocol
+    pong_ping, pong_store, pong_findNode, pong_findNode: Pong Remote Peer
+
+    start_server: Start Kademlia TCP Server
+    stop_server:  Stop Kademlia TCP Server
+"""
+    def __init__(self,
+                host=const.kad.server.TCP_DEFAULT_HOST,
+                port=const.kad.server.TCP_DEFAULT_PORT,
+                loop, service):
         """Init
 
         Args:
-            kbucket: KBucket Object
-            alpha: Parallel Operations
-            node: Self Node
-            remote: Server Address
-            loop: Loop Object
-            rpc: RPC Message Object
+            host:    TCP Server Host. Default 127.0.0.1
+            port:    TCP Server Port. Default 8567
+            loop:    Asyncio Loop Object
+            service: Kademlia Service
         """
-        self.ksize = ksize
-        self.alpha = alpha
-        self.node = node
-        self.host = host
-        self.port = port
+        self.host, self.port = host, port
         self.loop = loop
-        self.rpc = rpc
+        self.service = service
+        self.server = None
 
     async def handle(self, reader, writer):
-        await self.protocol.handle(reader)
+        await self.service.tcpProtocol.handle(reader)
         writer.close()
 
     async def start_server(self):
-        self.server = await asyncio.start_server(self.handle, self.host, self.port, loop=self.loop)
-        self.protocol = KademliaProtocol(self.node, self.rpc, self, self.loop)
+        self.server = await asyncio.start_server(
+            self.handle,
+            self.host, self.port,
+            loop=self.loop
+        )
         return self.server
 
     async def stop_server(self):
         self.server.close()
         await self.server.wait_closed()
+        self.server=None
 
     async def ping(self, remote):
         """Ping
@@ -45,10 +62,8 @@ class KademliaServer(object):
         Returns:
             Remote Node
         """
-        reader, writer = await remote.open_connection(self.loop)
-        await self.protocol._do_ping(writer)
-        writer.close()
-
+        reader, writer = await remote.connect_tcp(self.loop)
+        
     async def store(self, key, value):
         """Store
 

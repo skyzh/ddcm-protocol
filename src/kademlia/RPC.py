@@ -3,9 +3,10 @@ import json
 import const
 import struct
 
-class KademliaRPC:
-    def __init__(self):
-        pass
+class RPC:
+    def __init__(self, service):
+        self.service = service
+
     def pack_ping(self, local, echo):
         """Pack Ping Message
 

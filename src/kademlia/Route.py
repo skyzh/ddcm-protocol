@@ -1,4 +1,4 @@
-from kbucket import KBucket
+from KBucket import KBucket
 
 class Route:
     def __init__(self, kSize, selfNode):

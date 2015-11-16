@@ -1,4 +1,15 @@
 class Node:
+"""Node
+
+An Object storing Node Data
+
+Vars:
+    id:   20-byte Array
+    hash: 160-bit int
+
+Func:
+    distance: Calculate Distance between two Nodes
+"""
     def __init__(self, id, remote=None):
         """Node
 

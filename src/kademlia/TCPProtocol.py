@@ -1,18 +1,21 @@
-import struct
-import const
-from rpc import KademliaRPC
 import random
 import asyncio
 import codecs
-import utils
-from remote import Remote
+import struct
 
-class KademliaProtocol:
-    def __init__(self, selfNode, rpc, server, loop):
-        self.selfNode = selfNode
+import const
+import utils
+
+from Service import Service
+
+class TCPProtocol(object):
+"""TCPProtocol
+
+Protocol used in TCP Connections between Peers.
+"""
+    def __init__(self, loop, service):
         self.loop = loop
-        self.rpc = rpc
-        self.server = server
+        self.service = service
 
     async def _do_send(self, writer, data):
         writer.write(data)

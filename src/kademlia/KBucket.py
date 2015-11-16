@@ -1,7 +1,10 @@
 import utils
 
 class KBucket:
-    def __init__(self, left, right, kSize):
+    def __init__(self, loop, service, left, right, kSize):
+        self.loop = loop
+        self.service = service
+        
         self.range = (left, right)
         self.nodes = OrderedDict()
         self.replaceNodes = OrderedDict()
