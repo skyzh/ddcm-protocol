@@ -3,7 +3,7 @@ from TCPProtocol import TCPProtocol
 from Protocol import Protocol
 from RPC import RPC
 from Node import Node
-from KBucket import KBucket
+from Route import Route
 
 class Service(object):
 """Service
@@ -17,7 +17,7 @@ Vars:
     udpServer:    Kademlia UDP Server
     tcpProtocol:  Kademlia TCP Protocol
     udpProtocol:  Kademlia UDP Protocol
-    kBucket:      Kademlia KBucket
+    route:        Kademlia KBuckets
     selfNode:     Present Node
     storage:      Kademlia Key-Value Storage
     RPC:          Kademlia Message Compress Module
@@ -37,6 +37,10 @@ Vars:
             loop = self.loop
         )
         self.tcpProtocol = TCPProtocol(
+            service = self,
+            loop = self.loop
+        )
+        self.route = Route(
             service = self,
             loop = self.loop
         )

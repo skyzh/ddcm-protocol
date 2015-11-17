@@ -1,4 +1,4 @@
-class Node:
+class Node(object):
 """Node
 
 An Object storing Node Data

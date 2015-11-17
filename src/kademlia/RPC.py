@@ -3,7 +3,7 @@ import json
 import const
 import struct
 
-class RPC:
+class RPC(object):
     def __init__(self, service):
         self.service = service
 

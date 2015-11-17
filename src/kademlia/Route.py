@@ -1,12 +1,12 @@
 from KBucket import KBucket
 
-class Route:
-    def __init__(self, kSize, selfNode):
+class Route(object):
+    def __init__(self, service, loop, kSize, selfNode):
+        self.service = service
+        self.loop = loop
+
         self.selfNode = selfNode
         self.ksize = kSize
-        self.newRoute()
-
-    def newRoute(self):
         self.buckets = [KBucket(0, 2 ** 160, self.ksize)]
 
     def getBucket(self, node):

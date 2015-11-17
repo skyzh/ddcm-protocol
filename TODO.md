@@ -13,7 +13,7 @@ A Kademlia Service contains a Server, KBucket, Protocol, RPC and Settings.
     Service(config)
         - TCPServer
         - UDPServer
-        - KademliaInterface
+        - Service
         - Protocol
         - RPC
         - KBucket
@@ -34,7 +34,7 @@ A Data Structure storing key-value data.
 
 In original paper, Kademlia is based on UDP Protocol.
 
-For sustanbale and stable key-value storage, we use TCP instead UDP.
+For sustainable and stable key-value storage, we use TCP instead UDP.
 
 In the future, we may use UDP when finding a node and use TCP when calling
 Store.
@@ -53,4 +53,3 @@ Also function of republishing key hasn't be introduced.
     ./kademlia-cli cli
     ./kademlia-cli -c ~/.config/kademlia/config.json
     ./kad-cli1 (alias of kademlia-cli, loading config from cli1.json)
-
