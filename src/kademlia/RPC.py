@@ -1,7 +1,7 @@
 import struct
 import json
-import const
-import struct
+
+from . import const
 
 class RPC(object):
     def __init__(self, service):

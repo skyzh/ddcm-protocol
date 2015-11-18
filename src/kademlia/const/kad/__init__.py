@@ -1,1 +1,2 @@
-import const.kad.command
+from . import command
+from . import server

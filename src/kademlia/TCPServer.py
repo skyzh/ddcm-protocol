@@ -1,29 +1,29 @@
 import random
 import asyncio
 
-import const
-import utils
+from . import const
+from . import utils
 
-from Protocol import Protocol
-from Remote import Remote
+from . import TCPProtocol
+from . import Remote
 
 class TCPServer(object):
-"""TCP Server
+    """TCP Server
 
-Provides TCP Protocol for Kademlia Service.
+    Provides TCP Protocol for Kademlia Service.
 
-Func:
-    ping, store, findValue, findNode: Call Remote Peer in these commands
-                                      in TCP Protocol
-    pong_ping, pong_store, pong_findNode, pong_findNode: Pong Remote Peer
+    Func:
+        ping, store, findValue, findNode: Call Remote Peer in these commands
+                                          in TCP Protocol
+        pong_ping, pong_store, pong_findNode, pong_findNode: Pong Remote Peer
 
-    start_server: Start Kademlia TCP Server
-    stop_server:  Stop Kademlia TCP Server
-"""
-    def __init__(self,
+        start_server: Start Kademlia TCP Server
+        stop_server:  Stop Kademlia TCP Server
+    """
+    def __init__(self, loop, service,
                 host=const.kad.server.TCP_DEFAULT_HOST,
                 port=const.kad.server.TCP_DEFAULT_PORT,
-                loop, service):
+                ):
         """Init
 
         Args:
@@ -53,88 +53,3 @@ Func:
         self.server.close()
         await self.server.wait_closed()
         self.server=None
-
-    async def ping(self, remote):
-        """Ping
-
-        Args:
-            remote: Remote Destination
-        Returns:
-            Remote Node
-        """
-        reader, writer = await remote.connect_tcp(self.loop)
-        
-    async def store(self, key, value):
-        """Store
-
-        Args:
-            key: Key
-            value: Value
-        Returns:
-            None
-        """
-        pass
-
-    async def findNode(self, remote):
-        """findNode
-
-        Args:
-            remote: Remote Hash
-        Returns:
-            Remote Node
-        """
-        pass
-
-    async def findValue(self, key):
-        """findValue
-
-        Args:
-            key: Key
-        Returns:
-            (key, value)
-        """
-        pass
-
-    async def pong_ping(self, remote, echo):
-        """Pong
-
-        Args:
-            remote: Remote Destination
-            echo: Echo Value
-        Returns:
-            None
-        """
-        pass
-
-    async def pong_store(self, remote, echo):
-        """Pong
-
-        Args:
-            remote: Remote Destination
-            echo: Echo Value
-        Returns:
-            None
-        """
-        pass
-
-    async def pong_findNode(self, remote, echo):
-        """Pong
-
-        Args:
-            remote: Remote Destination
-            echo: Echo Value
-        Returns:
-            None
-        """
-        pass
-
-    async def pong_findValue(self, remote, echo):
-        """Pong
-
-        Args:
-            remote: Remote Destination
-            echo: Echo Value
-        Returns:
-            None
-        """
-        pass

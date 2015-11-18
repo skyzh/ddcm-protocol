@@ -1,1 +1,1 @@
-import const.kad
+from . import kad

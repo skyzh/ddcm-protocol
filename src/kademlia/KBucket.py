@@ -1,4 +1,4 @@
-import utils
+from . import utils
 
 class KBucket(object):
     def __init__(self, loop, service, left, right, kSize):

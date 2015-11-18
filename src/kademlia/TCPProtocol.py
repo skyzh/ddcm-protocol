@@ -3,16 +3,16 @@ import asyncio
 import codecs
 import struct
 
-import const
-import utils
+from . import const
+from . import utils
 
-from Service import Service
+from . import Service
 
 class TCPProtocol(object):
-"""TCPProtocol
+    """TCPProtocol
 
-Protocol used in TCP Connections between Peers.
-"""
+    Protocol used in TCP Connections between Peers.
+    """
     def __init__(self, loop, service):
         self.loop = loop
         self.service = service
