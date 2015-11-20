@@ -37,6 +37,7 @@ class TCPProtocol(object):
     async def _do_findValue(self, key):
         pass
 
+    
     async def _handle_ping(self, echo, remoteNode, data):
         print("".join(["RPC: Recv Command ",
             "PING",

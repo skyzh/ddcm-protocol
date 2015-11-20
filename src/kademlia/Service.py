@@ -3,7 +3,7 @@ from . import TCPProtocol
 from . import RPC
 from . import Node
 from . import Route
-from . import Call
+from . import TCPCall
 
 
 class Service(object):
@@ -23,7 +23,7 @@ class Service(object):
         storage:      Kademlia Key-Value Storage
         RPC:          Kademlia Message Compress Module
         daemonServer: Kademlia Daemon Server
-        call:         Remote Call Service
+        tcpCall:      Remote Call Service on TCP Protocol
     """
     def __init__(self, config, loop):
         self.config = config
@@ -46,7 +46,7 @@ class Service(object):
             service = self,
             loop = self.loop
         )
-        self.call = Call(
+        self.tcpCall = TCPCall(
             service = self,
             loop = self.loop
         )

@@ -1,4 +1,4 @@
-class Call(object):
+class TCPCall(object):
     """Command
     Provides ways to send commands
     """
@@ -15,7 +15,9 @@ class Call(object):
             Remote Node
         """
         reader, writer = await remote.connect_tcp(self.loop)
-
+        self.service.tcpProtocol._do_ping(writer)
+        writer.close()
+        
     async def store(self, key, value):
         """Store
 
