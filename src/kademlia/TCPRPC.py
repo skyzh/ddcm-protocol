@@ -3,9 +3,10 @@ import json
 
 from . import const
 
-class RPC(object):
-    def __init__(self, service):
+class TCPRPC(object):
+    def __init__(self, service, loop):
         self.service = service
+        self.loop = loop
 
     def pack_ping(self, local, echo):
         """Pack Ping Message

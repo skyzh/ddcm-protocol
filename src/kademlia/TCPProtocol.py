@@ -6,8 +6,6 @@ import struct
 from . import const
 from . import utils
 
-from . import Service
-
 class TCPProtocol(object):
     """TCPProtocol
 
@@ -22,11 +20,11 @@ class TCPProtocol(object):
         await writer.drain()
 
     async def _do_pong(self, writer, echo):
-        await self._do_send(writer, self.rpc.pack_pong(self.selfNode, echo))
+        await self._do_send(writer, self.rpc.pack_pong(self.service.selfNode, echo))
 
     async def _do_ping(self, writer):
         await asyncio.sleep(random.random() * 2)
-        await self._do_send(writer, self.rpc.pack_ping(self.selfNode, utils.get_echo_bytes()))
+        await self._do_send(writer, self.service.tcpRPC.pack_ping(self.service.tcpNode, utils.get_echo_bytes()))
 
     async def _do_store(self, key, value):
         pass
@@ -37,7 +35,7 @@ class TCPProtocol(object):
     async def _do_findValue(self, key):
         pass
 
-    
+
     async def _handle_ping(self, echo, remoteNode, data):
         print("".join(["RPC: Recv Command ",
             "PING",
@@ -66,8 +64,17 @@ class TCPProtocol(object):
             codecs.encode(remoteNode, "hex").decode()
         ]))
 
+    async def _handle_pong_store(self, echo, remoteNode, data):
+        pass
+
+    async def _handle_pong_findNode(self, echo, remoteNode, data):
+        pass
+
+    async def _handle_pong_findValue(self, echo, remoteNode, data):
+        pass
+
     async def handle(self, reader):
-        command, echo, remoteNode, data = await self.rpc.read_command(reader)
+        command, echo, remoteNode, data = await self.service.tcpRPC.read_command(reader)
         if command == const.kad.command.PING:
             await self._handle_ping(echo, remoteNode, data)
         elif command == const.kad.command.STORE:
@@ -78,6 +85,12 @@ class TCPProtocol(object):
             await self._handle_findValue(echo, remoteNode, data)
         elif command == const.kad.command.PONG:
             await self._handle_pong(echo, remoteNode, data)
+        elif command == const.kad.command.PONG_STORE:
+            await self._handle_pong_ping(echo, remoteNode, data)
+        elif command == const.kad.command.PONG_FIND_NODE:
+            await self._handle_pong_findNode(echo, remoteNode, data)
+        elif command == const.kad.command.PONG_FIND_VALUE:
+            await self._handle_pong_findValue(echo, remoteNode, data)
         else:
-            # Handle Unknown Command
+            # TODO: Handle Unknown Command
             pass

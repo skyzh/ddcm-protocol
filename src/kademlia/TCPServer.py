@@ -4,9 +4,6 @@ import asyncio
 from . import const
 from . import utils
 
-from . import TCPProtocol
-from . import Remote
-
 class TCPServer(object):
     """TCP Server
 
@@ -38,8 +35,9 @@ class TCPServer(object):
         self.server = None
 
     async def handle(self, reader, writer):
-        await self.service.tcpProtocol.handle(reader)
+        data = await self.service.tcpProtocol.handle(reader)
         writer.close()
+        self.service.tcpCall.call(data)
 
     async def start_server(self):
         self.server = await asyncio.start_server(
