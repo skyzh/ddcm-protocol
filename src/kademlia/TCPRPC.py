@@ -1,7 +1,10 @@
 import struct
 import json
+import socket
 
 from . import const
+from .Remote import Remote
+from .Node import Node
 
 class TCPRPC(object):
     def __init__(self, service, loop):
@@ -21,7 +24,8 @@ class TCPRPC(object):
         return b"".join([
             struct.pack('B', const.kad.command.PING),
             echo,
-            local.id
+            local.id,
+            self.pack_remote(self.service.tcpServer.remote)
         ])
     def pack_pong(self, local, echo):
         """Pack Ping Message
@@ -36,7 +40,8 @@ class TCPRPC(object):
         return b"".join([
             struct.pack('B', const.kad.command.PONG),
             echo,
-            local.id
+            local.id,
+            self.pack_remote(self.service.tcpServer.remote)
         ])
     async def read_ping(self):
         return None
@@ -61,21 +66,23 @@ class TCPRPC(object):
             remote
         ])
 
-    def pack(self, data):
-        """Pack Data
-
-        Args:
-            data: Data to Pack
-
-        Returns:
-            Packed Data to Send, in JSON
-        """
-        json_data = json.dumps(data).encode()
-        size_data = struct.pack('>H', len(json_data))
-        return size_data + json_data
-
     def get_command_string(self, id):
         return const.kad.command.COMMANDS[id]
+
+    def pack_remote(self, remote):
+        remote_ip = socket.inet_aton(remote.host)
+        return b"".join([
+            struct.pack('>HH', len(remote_ip), remote.port),
+            remote_ip
+        ])
+
+    async def read_remote(self, reader):
+        ip_size, port = struct.unpack('>HH', await reader.readexactly(4))
+        host = socket.inet_ntoa(await reader.readexactly(ip_size))
+        return Remote(
+            host = host,
+            port = port
+        )
 
     async def read_command(self, reader):
         """Read Command
@@ -88,7 +95,10 @@ class TCPRPC(object):
         """
         command, = struct.unpack('B', await reader.readexactly(1))
         echo = await reader.readexactly(4)
-        remoteNode = await reader.readexactly(20)
+        remoteNode = Node(
+            id = await reader.readexactly(20),
+            remote = await self.read_remote(reader)
+        )
         if command == const.kad.command.PING:
             return command, echo, remoteNode, await self.read_ping()
         elif command == const.kad.command.PONG:

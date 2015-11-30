@@ -58,10 +58,12 @@ class TCPCall(object):
         Returns:
             None
         """
-        pass
+        reader, writer = await remote.connect_tcp(self.loop)
+        await self.service.tcpProtocol._do_pong_ping(writer, echo)
+        writer.close()
 
     async def pong_store(self, remote, echo):
-        """Pong
+        """
 
         Args:
             remote: Remote Destination

@@ -3,6 +3,7 @@ import asyncio
 
 from . import const
 from . import utils
+from .Remote import Remote
 
 class TCPServer(object):
     """TCP Server
@@ -33,11 +34,16 @@ class TCPServer(object):
         self.loop = loop
         self.service = service
         self.server = None
+        self.remote = Remote(
+            host = host,
+            port = port
+        )
 
     async def handle(self, reader, writer):
+        remote = Remote()
+        remote.host, remote.port = writer.get_extra_info("peername")
         data = await self.service.tcpProtocol.handle(reader)
         writer.close()
-        self.service.tcpCall.call(data)
 
     async def start_server(self):
         self.server = await asyncio.start_server(
