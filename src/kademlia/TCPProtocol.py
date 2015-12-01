@@ -44,7 +44,7 @@ class TCPProtocol(object):
             " Echo ",
             codecs.encode(echo, "hex").decode(),
             " Remote ",
-            codecs.encode(remoteNode, "hex").decode()
+            remoteNode.get_hash_string()
         ]))
         await self.service.tcpCall.pong_ping(remoteNode.remote, echo)
 
@@ -63,7 +63,7 @@ class TCPProtocol(object):
             " Echo ",
             codecs.encode(echo, "hex").decode(),
             " Remote ",
-            codecs.encode(remoteNode, "hex").decode()
+            remoteNode.get_hash_string()
         ]))
 
     async def _handle_pong_store(self, echo, remoteNode, data):

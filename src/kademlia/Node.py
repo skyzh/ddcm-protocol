@@ -1,3 +1,5 @@
+import codecs
+
 class Node(object):
     """Node
 
@@ -22,3 +24,6 @@ class Node(object):
 
     def distance(self, node):
         return self.hash ^ node.hash
+
+    def get_hash_string(self):
+        return codecs.encode(self.id, "hex").decode()
