@@ -1,11 +1,10 @@
-from .TCPServer import TCPServer
-from .TCPProtocol import TCPProtocol
-from .TCPRPC import TCPRPC
+from . import utils
+
 from .Node import Node
 from .Route import Route
-from .TCPCall import TCPCall
 from .Remote import Remote
-from . import utils
+from .Logger import Logger
+from .TCPService import TCPService
 
 class Service(object):
     """Service
@@ -15,49 +14,23 @@ class Service(object):
     Vars:
         config:       Service config
         loop:         Asyncio Loop Object
-        tcpServer:    Kademlia TCP Server
-        udpServer:    Kademlia UDP Server
-        tcpProtocol:  Kademlia TCP Protocol
-        udpProtocol:  Kademlia UDP Protocol
+        tcpService:   Kademlia Service containing all objects for TCP.
         route:        Kademlia KBuckets
-        tcpNode:      Present Node on TCP
         storage:      Kademlia Key-Value Storage
-        tcpRPC:       Kademlia Message Compress Module for TCP
-        udpRPC:       Kademlia Message Compress Module for UDP
         daemonServer: Kademlia Daemon Server
-        tcpCall:      Remote Call Service on TCP Protocol
     """
     def __init__(self, config, loop):
         self.config = config
         self.loop = loop
-        self.tcpServer = TCPServer(
-            service = self,
-            loop = self.loop,
-            host = self.config["server"]["host"],
-            port = self.config["server"]["port"]
-        )
-        self.tcpRPC = TCPRPC(
-            service = self,
-            loop = self.loop
-        )
-        self.tcpProtocol = TCPProtocol(
-            service = self,
-            loop = self.loop
-        )
-        self.tcpCall = TCPCall(
-            service = self,
-            loop = self.loop
-        )
-        self.tcpNode = Node(
-            id=utils.get_random_node_id(),
-            remote=Remote(
-                host = self.config["server"]["host"],
-                port = self.config["server"]["port"]
-            )
-        )
+        self.logger = Logger(config["debug"]["logging"])
+
+        self.tcpService = TCPService(config, self, loop)
+
+        self.__logger__ = self.logger.get_logger("Service")
 
     async def start(self):
-        await self.tcpServer.start_server()
+        await self.tcpService.start()
+        self.__logger__.info("Kademlia Service has been started.")
 
     async def stop(self):
-        await self.tcpServer.stop_server()
+        await self.tcpService.stop()

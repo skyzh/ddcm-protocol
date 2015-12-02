@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
+import logging
 
 import kademlia
 
@@ -9,16 +10,20 @@ service = kademlia.Service({
     "server": {
         'host': "127.0.0.1",
         'port': 8963
+    },
+    "debug": {
+        "logging": {
+            "level": "DEBUG"
+        }
     }
 }, loop)
 
 loop.run_until_complete(service.start())
 
-print("Kademlia Service has been started.")
 # print(service.tcpServer.server.sockets[0].getsockname())
-loop.run_until_complete(service.tcpCall.ping(kademlia.Remote(
-    host="127.0.0.1",
-    port=8963
+loop.run_until_complete(service.tcpService.call.ping(kademlia.Remote(
+    host = "127.0.0.1",
+    port = 8963
 )))
 
 try:

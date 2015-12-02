@@ -3,8 +3,8 @@ import asyncio
 import codecs
 import struct
 
-from . import const
-from . import utils
+from kademlia import utils
+from kademlia import const
 
 class TCPProtocol(object):
     """TCPProtocol
@@ -22,11 +22,11 @@ class TCPProtocol(object):
     async def _do_pong_ping(self, writer, echo):
         await self._do_send(
             writer,
-            self.service.tcpRPC.pack_pong(self.service.tcpNode, echo)
+            self.service.rpc.pack_pong(self.service.node, echo)
         )
 
     async def _do_ping(self, writer):
-        await self._do_send(writer, self.service.tcpRPC.pack_ping(self.service.tcpNode, utils.get_echo_bytes()))
+        await self._do_send(writer, self.service.rpc.pack_ping(self.service.node, utils.get_echo_bytes()))
 
     async def _do_store(self, key, value):
         pass
@@ -46,7 +46,7 @@ class TCPProtocol(object):
             " Remote ",
             remoteNode.get_hash_string()
         ]))
-        await self.service.tcpCall.pong_ping(remoteNode.remote, echo)
+        await self.service.call.pong_ping(remoteNode.remote, echo)
 
     async def _handle_store(self, echo, remoteNode, data):
         pass
@@ -76,7 +76,7 @@ class TCPProtocol(object):
         pass
 
     async def handle(self, reader):
-        command, echo, remoteNode, data = await self.service.tcpRPC.read_command(reader)
+        command, echo, remoteNode, data = await self.service.rpc.read_command(reader)
         if command == const.kad.command.PING:
             await self._handle_ping(echo, remoteNode, data)
         elif command == const.kad.command.STORE:

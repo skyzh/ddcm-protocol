@@ -15,7 +15,7 @@ class TCPCall(object):
             Remote Node
         """
         reader, writer = await remote.connect_tcp(self.loop)
-        await self.service.tcpProtocol._do_ping(writer)
+        await self.service.protocol._do_ping(writer)
         writer.close()
 
     async def store(self, key, value):
@@ -59,7 +59,7 @@ class TCPCall(object):
             None
         """
         reader, writer = await remote.connect_tcp(self.loop)
-        await self.service.tcpProtocol._do_pong_ping(writer, echo)
+        await self.service.protocol._do_pong_ping(writer, echo)
         writer.close()
 
     async def pong_store(self, remote, echo):

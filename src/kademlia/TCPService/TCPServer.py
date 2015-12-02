@@ -1,9 +1,9 @@
 import random
 import asyncio
 
-from . import const
-from . import utils
-from .Remote import Remote
+from kademlia import utils
+from kademlia import const
+from kademlia.Remote import Remote
 
 class TCPServer(object):
     """TCP Server
@@ -18,10 +18,11 @@ class TCPServer(object):
         start_server: Start Kademlia TCP Server
         stop_server:  Stop Kademlia TCP Server
     """
-    def __init__(self, loop, service,
-                host=const.kad.server.TCP_DEFAULT_HOST,
-                port=const.kad.server.TCP_DEFAULT_PORT,
-                ):
+    def __init__(
+        self, loop, service,
+        host = const.kad.server.TCP_DEFAULT_HOST,
+        port = const.kad.server.TCP_DEFAULT_PORT,
+    ):
         """Init
 
         Args:
@@ -42,18 +43,18 @@ class TCPServer(object):
     async def handle(self, reader, writer):
         remote = Remote()
         remote.host, remote.port = writer.get_extra_info("peername")
-        data = await self.service.tcpProtocol.handle(reader)
+        data = await self.service.protocol.handle(reader)
         writer.close()
 
     async def start_server(self):
         self.server = await asyncio.start_server(
             self.handle,
             self.host, self.port,
-            loop=self.loop
+            loop = self.loop
         )
         return self.server
 
     async def stop_server(self):
         self.server.close()
         await self.server.wait_closed()
-        self.server=None
+        self.server = None
