@@ -23,10 +23,10 @@ class Service(object):
         self.config = config
         self.loop = loop
         self.logger = Logger(config["debug"]["logging"])
+        self.__logger__ = self.logger.get_logger("Service")
 
         self.tcpService = TCPService(config, self, loop)
 
-        self.__logger__ = self.logger.get_logger("Service")
 
     async def start(self):
         await self.tcpService.start()
@@ -34,3 +34,4 @@ class Service(object):
 
     async def stop(self):
         await self.tcpService.stop()
+        self.__logger__.info("Kademlia Service has been stopped.")

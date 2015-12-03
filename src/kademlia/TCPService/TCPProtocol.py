@@ -3,8 +3,8 @@ import asyncio
 import codecs
 import struct
 
-from kademlia import utils
-from kademlia import const
+from .. import utils
+from .. import const
 
 class TCPProtocol(object):
     """TCPProtocol
@@ -14,6 +14,8 @@ class TCPProtocol(object):
     def __init__(self, loop, service):
         self.loop = loop
         self.service = service
+
+        self.__logger__ = self.service.logger.get_logger("TCPProtocol")
 
     async def _do_send(self, writer, data):
         writer.write(data)
@@ -37,13 +39,11 @@ class TCPProtocol(object):
     async def _do_findValue(self, key):
         pass
 
-
     async def _handle_ping(self, echo, remoteNode, data):
-        print("".join(["RPC: Recv Command ",
-            "PING",
-            " Echo ",
+        self.__logger__.info("".join([
+            "PING ",
             codecs.encode(echo, "hex").decode(),
-            " Remote ",
+            " from ",
             remoteNode.get_hash_string()
         ]))
         await self.service.call.pong_ping(remoteNode.remote, echo)
@@ -58,11 +58,10 @@ class TCPProtocol(object):
         pass
 
     async def _handle_pong_ping(self, echo, remoteNode, data):
-        print("".join(["RPC: Recv Command ",
-            "PONG",
-            " Echo ",
+        self.__logger__.info("".join([
+            "PONG ",
             codecs.encode(echo, "hex").decode(),
-            " Remote ",
+            " from ",
             remoteNode.get_hash_string()
         ]))
 

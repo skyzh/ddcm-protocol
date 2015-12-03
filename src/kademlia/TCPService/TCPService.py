@@ -1,7 +1,7 @@
-from kademlia import utils
+from .. import utils
 
-from kademlia.Node import Node
-from kademlia.Remote import Remote
+from ..Node import Node
+from ..Remote import Remote
 
 from .TCPServer import TCPServer
 from .TCPProtocol import TCPProtocol
@@ -25,6 +25,8 @@ class TCPService(object):
         self.loop = loop
         self.service = service
         self.config = config
+        self.logger = self.service.logger
+        self.__logger__ = self.logger.get_logger("TCPService")
 
         self.server = TCPServer(
             service = self,
@@ -45,7 +47,7 @@ class TCPService(object):
             loop = self.loop
         )
         self.node = Node(
-            id = utils.get_random_node_id(),
+            id = utils.dump_node_hex(self.config["node"]["id"]),
             remote = Remote(
                 host = self.config["server"]["host"],
                 port = self.config["server"]["port"]
@@ -54,6 +56,8 @@ class TCPService(object):
 
     async def start(self):
         await self.server.start_server()
+        self.__logger__.info("Kademlia TCP Service has been started.")
 
     async def stop(self):
         await self.server.stop_server()
+        self.__logger__.info("Kademlia TCP Service has been stopped.")

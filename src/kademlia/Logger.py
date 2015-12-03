@@ -12,6 +12,7 @@ class Logger(object):
             config: a logger config object
         """
         self.config = config
+        logging.basicConfig(format = self.config["format"])
 
     def get_logger(self, name):
         logger = logging.getLogger(name)

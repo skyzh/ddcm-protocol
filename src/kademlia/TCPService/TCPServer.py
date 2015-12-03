@@ -1,9 +1,10 @@
 import random
 import asyncio
 
-from kademlia import utils
-from kademlia import const
-from kademlia.Remote import Remote
+from .. import utils
+from .. import const
+
+from ..Remote import Remote
 
 class TCPServer(object):
     """TCP Server

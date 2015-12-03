@@ -2,9 +2,10 @@ import struct
 import json
 import socket
 
-from kademlia import const
-from kademlia.Remote import Remote
-from kademlia.Node import Node
+from .. import const
+
+from ..Remote import Remote
+from ..Node import Node
 
 class TCPRPC(object):
     def __init__(self, service, loop):
@@ -27,6 +28,7 @@ class TCPRPC(object):
             local.id,
             self.pack_remote(self.service.server.remote)
         ])
+
     def pack_pong(self, local, echo):
         """Pack Ping Message
 
@@ -43,6 +45,7 @@ class TCPRPC(object):
             local.id,
             self.pack_remote(self.service.server.remote)
         ])
+
     async def read_ping(self):
         return None
     async def read_pong(self):
@@ -72,12 +75,12 @@ class TCPRPC(object):
     def pack_remote(self, remote):
         remote_ip = socket.inet_aton(remote.host)
         return b"".join([
-            struct.pack('>HH', len(remote_ip), remote.port),
+            struct.pack('>BH', len(remote_ip), remote.port),
             remote_ip
         ])
 
     async def read_remote(self, reader):
-        ip_size, port = struct.unpack('>HH', await reader.readexactly(4))
+        ip_size, port = struct.unpack('>BH', await reader.readexactly(3))
         host = socket.inet_ntoa(await reader.readexactly(ip_size))
         return Remote(
             host = host,

@@ -1,0 +1,15 @@
+{
+    "server": {
+        "host": "127.0.0.1",
+        "port": 8963
+    },
+    "debug": {
+        "logging": {
+            "level": "DEBUG",
+            "format": "[%(levelname)s:%(name)s] %(asctime)-15s %(message)s"
+        }
+    },
+    "node": {
+        "id": "9e936dd8926a14fe8b8c877f716e7e3909d88db5"
+    }
+}
