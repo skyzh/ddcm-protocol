@@ -46,7 +46,10 @@ class TCPProtocol(object):
             " from ",
             remoteNode.get_hash_string()
         ]))
-        await self.service.call.pong_ping(remoteNode.remote, echo)
+        asyncio.ensure_future(
+            self.service.call.pong_ping(remoteNode.remote, echo),
+            loop = self.loop
+        )
 
     async def _handle_store(self, echo, remoteNode, data):
         pass
