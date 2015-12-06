@@ -51,6 +51,46 @@ class TCPRPC(object):
     async def read_pong(self):
         return None
 
+    def pack_store(self, local, echo, key, value):
+        """Pack FindNode Message
+
+        Args:
+            local: Self Node
+            echo: Random Echo Message
+            key, value: (key, value) to save
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.STORE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            key,
+            struct.pack('>H', len(value)),
+            value
+        ])
+
+    def pack_pong_store(self, local, echo, key):
+        """Pack Pong Store Message
+
+        Args:
+            local: Self Node
+            echo: Recieved Echo Message
+            key: Key Saved
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.PONG_STORE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            key
+        ])
+
     def pack_findNode(self, local, echo, remote):
         """Pack FindNode Message
 
@@ -62,11 +102,72 @@ class TCPRPC(object):
         Returns:
             Packed Data to Send
         """
-        return self.pack([
-            const.kad.command.PING,
+        return b"".join([
+            struct.pack('B', const.kad.command.FIND_NODE),
             echo,
             local.id,
+            self.pack_remote(self.service.server.remote),
             remote
+        ])
+
+    def pack_pong_findNode(self, local, echo, remote):
+        """Pack Pong FindNode Message
+
+        Args:
+            local: Self Node
+            echo: Random Echo Message
+            remote: Hash of Node to Ping
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.PONG_FIND_NODE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            self.pack_remote(remote)
+        ])
+
+
+    def pack_findValue(self, local, echo, key):
+        """Pack FindValue Message
+
+        Args:
+            local: Self Node
+            echo: Random Echo Message
+            key: Key to Find
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.FIND_VALUE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            key
+        ])
+
+    def pack_pong_findValue(self, local, echo, key, value):
+        """Pack Pong FindValue Message
+
+        Args:
+            local: Self Node
+            echo: Random Echo Message
+            key, value: (key, value) to send
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.PONG_FIND_VALUE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            key,
+            struct.pack('>L', len(value)),
+            value
         ])
 
     def get_command_string(self, id):

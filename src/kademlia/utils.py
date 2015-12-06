@@ -17,4 +17,4 @@ def load_config(path):
     return config
 
 def dump_node_hex(data = None):
-    return data or codecs.decode(data.encode(), "hex")
+    return codecs.decode(data.encode(), "hex")
