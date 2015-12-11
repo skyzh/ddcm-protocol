@@ -10,6 +10,9 @@
         },
         "asyncio": {
             "enabled": true
+        },
+        "events": {
+            "enabled": true
         }
     },
     "node": {

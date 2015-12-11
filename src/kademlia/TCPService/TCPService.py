@@ -53,6 +53,7 @@ class TCPService(object):
                 port = self.config["server"]["port"]
             )
         )
+        self.queue = self.service.queue
 
     async def start(self):
         await self.server.start_server()

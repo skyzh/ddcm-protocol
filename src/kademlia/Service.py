@@ -1,4 +1,7 @@
+import asyncio
+
 from . import utils
+from . import const
 
 from .Node import Node
 from .Route import Route
@@ -18,10 +21,18 @@ class Service(object):
         route:        Kademlia KBuckets
         storage:      Kademlia Key-Value Storage
         daemonServer: Kademlia Daemon Server
+        queue:        Kademlia Event Queue
     """
+
     def __init__(self, config, loop):
         self.config = config
         self.loop = loop
+
+        self.queue = asyncio.Queue(
+            const.kad.service.MESSAGE_QUEUE_MAXSIZE,
+            loop=loop
+        )
+
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
 
