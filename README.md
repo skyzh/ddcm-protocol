@@ -12,13 +12,4 @@ BSD-Clause-3
 
 ## Test
 
-### RPC Test
-
-This test will make you know if rpc module works.
-
-    cd test
-    chmod +x rpc_test.py
-    ./rpc_test.py
-
-You'll see ping message from two origins.
-
+    cd src && ./run_test.sh

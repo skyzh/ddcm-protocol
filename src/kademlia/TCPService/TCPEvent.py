@@ -9,11 +9,10 @@ class TCPEvent(object):
         self.service = service
         self.enabled = self.service.config["debug"]["events"]
 
-    def add_event(self, event_type, data = None):
+    async def add_event(self, event_type, data = None):
         if self.enabled:
-            self.service.queue.put_nowait({
+            await self.service.queue.put({
                 "service": const.kad.event.TCPService,
                 "type": event_type,
                 "data": data
             })
-    

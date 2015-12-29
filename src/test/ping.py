@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import asyncio
 import logging
 import json
@@ -9,8 +8,9 @@ import kademlia
 from . import const
 
 class PingTest(unittest.TestCase):
-    async def when_ping(self):
-        pass
+    async def handle_events(self, service):
+        while True:
+            await service.queue.get()
 
     def test_ping(self):
         config = kademlia.utils.load_config("config.json")
@@ -27,10 +27,9 @@ class PingTest(unittest.TestCase):
             )) for i in range(const.test.PING_COUNT)]
         ))
 
-        try:
-            loop.run_forever()
-        except KeyboardInterrupt:
-            pass
+        loop.run_until_complete(
+            asyncio.ensure_future(self.handle_events(service))
+        )
 
         loop.run_until_complete(service.stop())
 
