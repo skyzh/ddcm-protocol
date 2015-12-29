@@ -7,6 +7,7 @@ from .TCPServer import TCPServer
 from .TCPProtocol import TCPProtocol
 from .TCPRPC import TCPRPC
 from .TCPCall import TCPCall
+from .TCPEvent import TCPEvent
 
 class TCPService(object):
     """TCPService
@@ -52,6 +53,10 @@ class TCPService(object):
                 host = self.config["server"]["host"],
                 port = self.config["server"]["port"]
             )
+        )
+        self.event = TCPEvent(
+            service = self,
+            loop = self.loop
         )
         self.queue = self.service.queue
 

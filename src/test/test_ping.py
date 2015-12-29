@@ -35,7 +35,3 @@ class PingTest(unittest.TestCase):
         loop.run_until_complete(service.stop())
 
         loop.close()
-
-
-if __name__ == '__main__':
-    unittest.main()

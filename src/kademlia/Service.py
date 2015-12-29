@@ -35,7 +35,7 @@ class Service(object):
 
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
-
+        
         self.tcpService = TCPService(config, self, loop)
 
 
