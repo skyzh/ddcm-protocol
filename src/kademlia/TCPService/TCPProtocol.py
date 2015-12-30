@@ -27,16 +27,19 @@ class TCPProtocol(object):
             self.service.rpc.pack_pong(self.service.node, echo)
         )
 
-    async def _do_ping(self, writer):
-        await self._do_send(writer, self.service.rpc.pack_ping(self.service.node, utils.get_echo_bytes()))
+    async def _do_ping(self, writer, echo):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_ping(self.service.node, echo)
+        )
 
-    async def _do_store(self, key, value):
+    async def _do_store(self, echo, key, value):
         pass
 
-    async def _do_findNode(self, nodeID):
+    async def _do_findNode(self, echo, nodeID):
         pass
 
-    async def _do_findValue(self, key):
+    async def _do_findValue(self, echo, key):
         pass
 
     async def _handle_ping(self, echo, remoteNode, data):
@@ -46,6 +49,8 @@ class TCPProtocol(object):
             " from ",
             remoteNode.get_hash_string()
         ]))
+
+        await self.service.event.handle_ping(echo, remoteNode, data)
         asyncio.ensure_future(
             self.service.call.pong_ping(remoteNode.remote, echo),
             loop = self.loop
@@ -67,6 +72,7 @@ class TCPProtocol(object):
             " from ",
             remoteNode.get_hash_string()
         ]))
+        await self.service.event.handle_pong_ping(echo, remoteNode, data)
 
     async def _handle_pong_store(self, echo, remoteNode, data):
         pass

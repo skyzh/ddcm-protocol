@@ -10,7 +10,11 @@ from . import const
 class PingTest(unittest.TestCase):
     async def handle_events(self, service):
         while True:
-            await service.queue.get()
+            event = await service.queue.get()
+            if event["type"] is kademlia.const.kad.event.SEND_PING:
+                print(event["data"]["echo"])
+            if event["type"] is kademlia.const.kad.event.HANDLE_PONG_PING:
+                print(event["data"]["echo"])
 
     def test_ping(self):
         config = kademlia.utils.load_config("config.json")
@@ -28,7 +32,9 @@ class PingTest(unittest.TestCase):
         ))
 
         loop.run_until_complete(
-            asyncio.ensure_future(self.handle_events(service))
+            asyncio.ensure_future(
+                self.handle_events(service)
+            )
         )
 
         loop.run_until_complete(service.stop())

@@ -16,3 +16,26 @@ class TCPEvent(object):
                 "type": event_type,
                 "data": data
             })
+            
+    async def do_pong_ping(self, remote, echo):
+        await self.add_event(const.kad.event.SEND_PONG_PING, {
+            "remote": remote,
+            "echo": echo
+        })
+    async def do_ping(self, remote, echo):
+        await self.add_event(const.kad.event.SEND_PING, {
+            "remote": remote,
+            "echo": echo
+        })
+    async def handle_pong_ping(self, echo, remoteNode, data):
+        await self.add_event(const.kad.event.HANDLE_PONG_PING, {
+            "remoteNode": remoteNode,
+            "echo": echo,
+            "data": data
+        })
+    async def handle_ping(self, echo, remoteNode, data):
+        await self.add_event(const.kad.event.HANDLE_PING, {
+            "remoteNode": remoteNode,
+            "echo": echo,
+            "data": data
+        })

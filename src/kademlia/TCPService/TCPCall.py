@@ -1,3 +1,5 @@
+from .. import utils
+
 class TCPCall(object):
     """Command
     Provides ways to send commands
@@ -15,8 +17,11 @@ class TCPCall(object):
             Remote Node
         """
         reader, writer = await remote.connect_tcp(self.loop)
-        await self.service.protocol._do_ping(writer)
+        echo = utils.get_echo_bytes()
+        await self.service.protocol._do_ping(writer, echo)
         writer.close()
+
+        await self.service.event.do_ping(remote, echo)
 
     async def store(self, key, value):
         """Store
@@ -61,6 +66,7 @@ class TCPCall(object):
         reader, writer = await remote.connect_tcp(self.loop)
         await self.service.protocol._do_pong_ping(writer, echo)
         writer.close()
+        await self.service.event.do_pong_ping(remote, echo)
 
     async def pong_store(self, remote, echo):
         """
