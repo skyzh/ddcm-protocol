@@ -10,7 +10,7 @@ from . import const
 class PingTest(unittest.TestCase):
     async def handle_events(self, service):
         self.pong_recved = 0
-        while pong_recved < 10:
+        while self.pong_recved < 10:
             event = await service.queue.get()
             if event["type"] is kademlia.const.kad.event.SEND_PING:
                 pass
