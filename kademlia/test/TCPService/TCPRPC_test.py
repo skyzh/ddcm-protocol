@@ -1,6 +1,10 @@
 import asyncio
 import logging
 import unittest
+try:
+    from socket import socketpair
+except ImportError:
+    from asyncio.windows_utils import socketpair
 
 import kademlia
 
@@ -14,11 +18,26 @@ class TCPRPCTest(unittest.TestCase):
         loop = asyncio.get_event_loop()
         loop.set_debug(config['debug']['asyncio']['enabled'])
 
-        tcpRPC = kademlia.TCPService.TCPRPC.TCPRPC(config, loop)
-        tcpNode = kademlia.Node(
-            id = kademlia.utils.dump_node_hex(config["node"]["id"]),
-            remote = kademlia.Remote(
-                host = config["server"]["host"],
-                port = config["server"]["port"]
+        service = kademlia.Service(config, loop)
+        echo = kademlia.utils.get_echo_bytes()
+
+        rsock, wsock = socketpair()
+
+        reader, writer = loop.run_until_complete(
+            asyncio.open_connection(sock=rsock, loop=loop)
+        )
+
+        wsock.send(
+            service.tcpService.rpc.pack_ping(service.tcpService.node, echo)
+        )
+
+        _command, _echo, _remoteNode, _data = loop.run_until_complete(
+            asyncio.ensure_future(
+                service.tcpService.rpc.read_command(reader)
             )
         )
+        writer.close()
+        wsock.close()
+
+        self.assertEqual(_command, kademlia.const.kad.command.PING)
+        self.assertEqual(echo, _echo)

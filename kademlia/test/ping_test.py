@@ -46,8 +46,6 @@ class PingTest(unittest.TestCase):
 
         loop.run_until_complete(service.stop())
 
-        loop.close()
-
         self.ping_sent.sort()
         self.pong_recved.sort()
 
