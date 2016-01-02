@@ -1,4 +1,0 @@
-"""
-    Tests
-"""
-from . import ping

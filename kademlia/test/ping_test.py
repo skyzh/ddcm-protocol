@@ -50,7 +50,7 @@ class PingTest(unittest.TestCase):
 
         self.ping_sent.sort()
         self.pong_recved.sort()
-        
+
         self.assertEqual(len(self.ping_sent), const.test.PING_COUNT)
         self.assertEqual(len(self.pong_recved), const.test.PING_COUNT)
         self.assertEqual(self.ping_sent, self.pong_recved)
