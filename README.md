@@ -1,12 +1,12 @@
-# Kademlia-Async
+# DDCM-Protocol
 
-[![Build Status](https://travis-ci.org/SkyZH/kademlia-async.svg)](https://travis-ci.org/SkyZH/kademlia-async)
+[![Build Status](https://travis-ci.org/SkyZH/ddcm-protocol.svg)](https://travis-ci.org/SkyZH/ddcm-protocol)
 
-Kademlia is a peer-to-peer network.
+DDCM = Dawn Distributed Computing Model
 
-Use Kademlia with Python Asyncio.
+DDCM-Protocol is based on kademlia, which is a peer-to-peer protocol.
 
-Inspired by [bmuller/kademlia](https://github.com/bmuller/kademlia)
+We enable every device to compute a specified task with DDCM.
 
 ## License
 
@@ -14,4 +14,4 @@ BSD-Clause-3
 
 ## Test
 
-    cd src && ./run_test.sh
+    ./run_test.sh

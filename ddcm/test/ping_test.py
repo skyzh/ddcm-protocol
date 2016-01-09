@@ -3,7 +3,7 @@ import logging
 import json
 import unittest
 
-import kademlia
+import ddcm
 
 from . import const
 
@@ -14,22 +14,22 @@ class PingTest(unittest.TestCase):
         self.pong_recved = []
         while pong_count < const.test.PING_COUNT:
             event = await service.queue.get()
-            if event["type"] is kademlia.const.kad.event.SEND_PING:
+            if event["type"] is ddcm.const.kad.event.SEND_PING:
                 self.ping_sent.append(event["data"]["echo"])
-            if event["type"] is kademlia.const.kad.event.HANDLE_PONG_PING:
+            if event["type"] is ddcm.const.kad.event.HANDLE_PONG_PING:
                 self.pong_recved.append(event["data"]["echo"])
                 pong_count = pong_count + 1
 
     def test_ping(self):
-        config = kademlia.utils.load_config("config.json")
+        config = ddcm.utils.load_config("config.json")
 
         loop = asyncio.get_event_loop()
         loop.set_debug(config['debug']['asyncio']['enabled'])
 
-        service = kademlia.Service(config, loop)
+        service = ddcm.Service(config, loop)
         loop.run_until_complete(service.start())
         loop.run_until_complete(asyncio.wait(
-            [service.tcpService.call.ping(kademlia.Remote(
+            [service.tcpService.call.ping(ddcm.Remote(
                 host = "127.0.0.1",
                 port = config["server"]["port"]
             )) for i in range(const.test.PING_COUNT)]

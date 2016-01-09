@@ -35,14 +35,14 @@ class Service(object):
 
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
-        
+
         self.tcpService = TCPService(config, self, loop)
 
 
     async def start(self):
         await self.tcpService.start()
-        self.__logger__.info("Kademlia Service has been started.")
+        self.__logger__.info("DDCM Service has been started.")
 
     async def stop(self):
         await self.tcpService.stop()
-        self.__logger__.info("Kademlia Service has been stopped.")
+        self.__logger__.info("DDCM Service has been stopped.")

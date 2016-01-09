@@ -1,1 +1,1 @@
-python3 -m unittest discover -s kademlia/test -t kademlia -p "*_test.py"
+python3 -m unittest discover -s ddcm/test -t ddcm -p "*_test.py"
