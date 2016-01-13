@@ -45,7 +45,7 @@ class TCPProtocol(object):
     async def _do_store(self, writer, echo, key, value):
         await self._do_send(
             writer,
-            self.service.rpc.pack_pong(
+            self.service.rpc.pack_store(
                 self.service.node,
                 self.service.server.remote,
                 echo,
