@@ -15,14 +15,16 @@ class StoreTest(unittest.TestCase):
         pong_count = 0
         self.ping_sent = []
         self.pong_recved = []
+        self.sent_pair = []
         while pong_count < const.test.STORE_COUNT:
             event = await service.queue.get()
             if event["type"] is ddcm.const.kad.event.SEND_STORE:
-                self.ping_sent.append(event["data"]["echo"])
+                self.ping_sent.append(event["data"]["data"][0])
+                self.sent_pair.append(event["data"]["data"])
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_STORE:
-                self.pong_recved.append(event["data"]["echo"])
+                self.pong_recved.append(event["data"]["data"])
                 pong_count = pong_count + 1
-
+                
     def StoreTestCase(func):
         async def _deco(*args, **kwargs):
             ret = await func(*args, **kwargs)
