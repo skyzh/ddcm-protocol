@@ -62,3 +62,23 @@ class TCPRPCTest(unittest.TestCase):
 
         self.assertEqual(_command, ddcm.const.kad.command.PING)
         self.assertEqual(echo, _echo)
+
+    @TestCase
+    def test_pack_pong_ping(self, loop, reader, wsock, tcpService, echo):
+        wsock.send(
+            tcpService.rpc.pack_pong(
+                tcpService.node,
+                tcpService.server.remote,
+                echo
+            )
+        )
+
+        _command, _echo, _remoteNode, _data = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+
+        self.assertEqual(_command, ddcm.const.kad.command.PONG)
+        self.assertEqual(echo, _echo)
