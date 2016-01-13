@@ -1,6 +1,8 @@
 import asyncio
 import logging
 import unittest
+import random
+
 try:
     from socket import socketpair
 except ImportError:
@@ -11,6 +13,9 @@ import ddcm
 from .. import const
 
 class TCPRPCTest(unittest.TestCase):
+    def get_key_pair(self):
+        return bytes(random.getrandbits(8) for i in range(20)), bytes(random.getrandbits(8) for i in range(120))
+
     def TestCase(func):
         def _deco(*args, **kwargs):
             config = ddcm.utils.load_config("config.json")
@@ -82,3 +87,53 @@ class TCPRPCTest(unittest.TestCase):
 
         self.assertEqual(_command, ddcm.const.kad.command.PONG)
         self.assertEqual(echo, _echo)
+
+    @TestCase
+    def test_pack_store(self, loop, reader, wsock, tcpService, echo):
+        key, value = self.get_key_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_store(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                key,
+                value
+            )
+        )
+
+        _command, _echo, _remoteNode, (_key, _value) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+
+        self.assertEqual(_command, ddcm.const.kad.command.STORE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_key, key)
+        self.assertEqual(_value, value)
+
+    @TestCase
+    def test_pack_pong_store(self, loop, reader, wsock, tcpService, echo):
+        key, value = self.get_key_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_pong_store(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                key
+            )
+        )
+
+        _command, _echo, _remoteNode, (_key) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+
+        self.assertEqual(_command, ddcm.const.kad.command.PONG_STORE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_key, key)

@@ -23,16 +23,23 @@ class TCPCall(object):
 
         await self.service.event.do_ping(remote, echo)
 
-    async def store(self, key, value):
+    async def store(self, remote, key, value):
         """Store
 
         Args:
+            remote: Remote Destination
             key: Key
             value: Value
         Returns:
             None
         """
-        pass
+        reader, writer = await remote.connect_tcp(self.loop)
+        echo = utils.get_echo_bytes()
+        await self.service.protocol._do_store(writer, echo, key, value)
+        writer.close()
+
+        await self.service.event.do_store(remote, echo, key, value)
+
 
     async def findNode(self, remote):
         """findNode

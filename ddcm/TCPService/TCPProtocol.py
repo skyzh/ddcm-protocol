@@ -21,20 +21,49 @@ class TCPProtocol(object):
         writer.write(data)
         await writer.drain()
 
-    async def _do_pong_ping(self, writer, echo):
-        await self._do_send(
-            writer,
-            self.service.rpc.pack_pong(self.service.node, echo)
-        )
-
     async def _do_ping(self, writer, echo):
         await self._do_send(
             writer,
-            self.service.rpc.pack_ping(self.service.node, echo)
+            self.service.rpc.pack_pong(
+                self.service.node,
+                self.service.server.remote,
+                echo
+            )
         )
 
-    async def _do_store(self, echo, key, value):
-        pass
+    async def _do_pong_ping(self, writer, echo):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong(
+                self.service.node,
+                self.service.server.remote,
+                echo
+            )
+        )
+
+
+    async def _do_store(self, writer, echo, key, value):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                key,
+                value
+            )
+        )
+
+    async def _do_pong_store(self, writer, echo, key):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong_store(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                key
+            )
+        )
 
     async def _do_findNode(self, echo, nodeID):
         pass

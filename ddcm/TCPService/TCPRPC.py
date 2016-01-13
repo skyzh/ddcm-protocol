@@ -12,11 +12,12 @@ class TCPRPC(object):
         self.service = service
         self.loop = loop
 
-    def pack_ping(self, local, echo):
+    def pack_ping(self, local, remote, echo):
         """Pack Ping Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
 
         Returns:
@@ -26,14 +27,15 @@ class TCPRPC(object):
             struct.pack('B', const.kad.command.PING),
             echo,
             local.id,
-            self.pack_remote(self.service.server.remote)
+            self.pack_remote(remote)
         ])
 
-    def pack_pong(self, local, echo):
+    def pack_pong(self, local, remote, echo):
         """Pack Ping Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Recieved Echo Message
 
         Returns:
@@ -43,19 +45,20 @@ class TCPRPC(object):
             struct.pack('B', const.kad.command.PONG),
             echo,
             local.id,
-            self.pack_remote(self.service.server.remote)
+            self.pack_remote(remote)
         ])
 
-    async def read_ping(self):
+    async def read_ping(self, reader):
         return None
-    async def read_pong(self):
+    async def read_pong(self, reader):
         return None
 
-    def pack_store(self, local, echo, key, value):
+    def pack_store(self, local, remote, echo, key, value):
         """Pack FindNode Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
             key, value: (key, value) to save
 
@@ -66,17 +69,18 @@ class TCPRPC(object):
             struct.pack('B', const.kad.command.STORE),
             echo,
             local.id,
-            self.pack_remote(self.service.server.remote),
+            self.pack_remote(remote),
             key,
-            struct.pack('>H', len(value)),
+            struct.pack('>L', len(value)),
             value
         ])
 
-    def pack_pong_store(self, local, echo, key):
+    def pack_pong_store(self, local, remote, echo, key):
         """Pack Pong Store Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Recieved Echo Message
             key: Key Saved
 
@@ -87,9 +91,19 @@ class TCPRPC(object):
             struct.pack('B', const.kad.command.PONG_STORE),
             echo,
             local.id,
-            self.pack_remote(self.service.server.remote),
+            self.pack_remote(remote),
             key
         ])
+
+    async def read_store(self, reader):
+        key = await reader.readexactly(20)
+        len_value = struct.unpack('>L', await reader.readexactly(4))[0]
+        value = await reader.readexactly(len_value)
+        return key, value
+
+    async def read_pong_store(self, reader):
+        key = await reader.readexactly(20)
+        return key
 
     def pack_findNode(self, local, echo, remote):
         """Pack FindNode Message
@@ -204,6 +218,10 @@ class TCPRPC(object):
             remote = await self.read_remote(reader)
         )
         if command == const.kad.command.PING:
-            return command, echo, remoteNode, await self.read_ping()
+            return command, echo, remoteNode, await self.read_ping(reader)
         elif command == const.kad.command.PONG:
-            return command, echo, remoteNode, await self.read_pong()
+            return command, echo, remoteNode, await self.read_pong(reader)
+        elif command == const.kad.command.STORE:
+            return command, echo, remoteNode, await self.read_store(reader)
+        elif command == const.kad.command.PONG_STORE:
+            return command, echo, remoteNode, await self.read_pong_store(reader)

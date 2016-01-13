@@ -6,7 +6,7 @@ DDCM = Dawn Distributed Computing Model
 
 DDCM-Protocol is based on kademlia, which is a peer-to-peer protocol.
 
-We enable every device to compute a specified task with DDCM.
+DDCM enables every device to compute for a specified task.
 
 ## License
 
