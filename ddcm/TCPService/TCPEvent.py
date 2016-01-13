@@ -39,16 +39,18 @@ class TCPEvent(object):
             "echo": echo,
             "data": data
         })
-        
-    async def do_pong_store(self, remote, echo):
+
+    async def do_pong_store(self, remote, echo, key):
         await const.kad.event.SEND_PONG_STORE, {
             "remote": remote,
-            "echo": echo
+            "echo": echo,
+            "data": (key)
         })
-    async def do_store(self, remote, echo):
+    async def do_store(self, remote, echo, key, value):
         await self.add_event(const.kad.event.SEND_STORE, {
             "remote": remote,
-            "echo": echo
+            "echo": echo,
+            "data": (key, value)
         })
     async def handle_pong_store(self, echo, remoteNode, data):
         await self.add_event(const.kad.event.HANDLE_PONG_STORE, {
