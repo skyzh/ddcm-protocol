@@ -1,7 +1,8 @@
 import asyncio
+import socket
 
 class Remote(object):
-    def __init__(self, host=None, port=None):
+    def __init__(self, host=None, port=None, family=socket.AF_UNSPEC):
         self.host = host
         self.port = port
 
