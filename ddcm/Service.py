@@ -6,6 +6,7 @@ from . import const
 from .Node import Node
 from .Route import Route
 from .Remote import Remote
+from .Storage import Storage
 from .Logger import Logger
 from .TCPService import TCPService
 
@@ -35,6 +36,9 @@ class Service(object):
 
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
+
+
+        self.storage = Storage()
 
         self.tcpService = TCPService(config, self, loop)
 
