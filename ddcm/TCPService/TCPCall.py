@@ -75,16 +75,21 @@ class TCPCall(object):
         writer.close()
         await self.service.event.do_pong_ping(remote, echo)
 
-    async def pong_store(self, remote, echo):
+    async def pong_store(self, remote, echo, key):
         """
 
         Args:
             remote: Remote Destination
             echo: Echo Value
+            key: Key Saved
         Returns:
             None
         """
-        pass
+        reader, writer = await remote.connect_tcp(self.loop)
+        await self.service.protocol._do_pong_store(writer, echo, key)
+        writer.close()
+
+        await self.service.event.do_pong_store(remote, echo, key)
 
     async def pong_findNode(self, remote, echo):
         """Pong
