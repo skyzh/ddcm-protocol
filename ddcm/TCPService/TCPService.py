@@ -59,6 +59,7 @@ class TCPService(object):
             loop = self.loop
         )
         self.queue = self.service.queue
+        self.storage = self.service.storage
 
     async def start(self):
         await self.server.start_server()

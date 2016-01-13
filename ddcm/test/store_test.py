@@ -24,7 +24,7 @@ class StoreTest(unittest.TestCase):
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_STORE:
                 self.pong_recved.append(event["data"]["data"])
                 pong_count = pong_count + 1
-                
+
     def StoreTestCase(func):
         async def _deco(*args, **kwargs):
             ret = await func(*args, **kwargs)
@@ -46,6 +46,10 @@ class StoreTest(unittest.TestCase):
             self.assertEqual(len(self.ping_sent), const.test.STORE_COUNT)
             self.assertEqual(len(self.pong_recved), const.test.STORE_COUNT)
             self.assertEqual(self.ping_sent, self.pong_recved)
+
+            for data in self.sent_pair:
+                self.assertEqual(await service.storage.exist(data[0]), True)
+                self.assertEqual(await service.storage.get(data[0]), data[1])
 
             return ret
         return _deco
