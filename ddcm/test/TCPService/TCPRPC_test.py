@@ -64,7 +64,6 @@ class TCPRPCTest(unittest.TestCase):
             )
         )
 
-
         self.assertEqual(_command, ddcm.const.kad.command.PING)
         self.assertEqual(echo, _echo)
 
@@ -83,7 +82,6 @@ class TCPRPCTest(unittest.TestCase):
                 tcpService.rpc.read_command(reader)
             )
         )
-
 
         self.assertEqual(_command, ddcm.const.kad.command.PONG)
         self.assertEqual(echo, _echo)
@@ -107,7 +105,6 @@ class TCPRPCTest(unittest.TestCase):
                 tcpService.rpc.read_command(reader)
             )
         )
-
 
         self.assertEqual(_command, ddcm.const.kad.command.STORE)
         self.assertEqual(_echo, echo)
@@ -133,7 +130,55 @@ class TCPRPCTest(unittest.TestCase):
             )
         )
 
-
         self.assertEqual(_command, ddcm.const.kad.command.PONG_STORE)
         self.assertEqual(_echo, echo)
         self.assertEqual(_key, key)
+
+    @TestCase
+    def test_pack_findNode(self, loop, reader, wsock, tcpService, echo):
+        remoteId = ddcm.utils.get_random_node_id()
+
+        wsock.send(
+            tcpService.rpc.pack_findNode(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                remoteId
+            )
+        )
+
+        _command, _echo, _remoteNode, (_remoteId) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.FIND_NODE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_remoteId, remoteId)
+
+    @TestCase
+    def test_pack_pong_findNode(self, loop, reader, wsock, tcpService, echo):
+        remoteId = ddcm.utils.get_random_node_id()
+        remoteNode = ddcm.Remote(host = "59.48.23.233", port=23876)
+
+        wsock.send(
+            tcpService.rpc.pack_pong_findNode(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                remoteId,
+                remoteNode
+            )
+        )
+
+        _command, _echo, _remoteNode, (_remoteId, _remoteNode) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.PONG_FIND_NODE)
+        self.assertEqual(_remoteId, remoteId)
+        self.assertEqual(_remoteNode.host, remoteNode.host)
+        self.assertEqual(_remoteNode.port, remoteNode.port)

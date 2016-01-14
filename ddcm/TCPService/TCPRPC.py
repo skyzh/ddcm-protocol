@@ -125,7 +125,7 @@ class TCPRPC(object):
             remoteId
         ])
 
-    def pack_pong_findNode(self, local, remote, echo, remoteId):
+    def pack_pong_findNode(self, local, remote, echo, remoteId, remoteNode):
         """Pack Pong FindNode Message
 
         Args:
@@ -133,7 +133,7 @@ class TCPRPC(object):
             remote: Self Address
             echo: Random Echo Message
             remoteId: Hash of Node to return
-
+            remoteNode: Remote Address
         Returns:
             Packed Data to Send
         """
@@ -142,13 +142,14 @@ class TCPRPC(object):
             echo,
             local.id,
             self.pack_remote(self.service.server.remote),
-            self.pack_remote(remote)
+            remoteId,
+            self.pack_remote(remoteNode)
         ])
 
     async def read_findNode(self, reader):
-        return None
+        return await reader.readexactly(20)
     async def read_pong_findNode(self, reader):
-        return None
+        return await reader.readexactly(20), await self.read_remote(reader)
 
     def pack_findValue(self, local, remote, echo, key):
         """Pack FindValue Message
@@ -246,7 +247,7 @@ class TCPRPC(object):
         return None
     async def read_pong_reduce(self, reader):
         return None
-    
+
     def get_command_string(self, id):
         return const.kad.command.COMMANDS[id]
 
