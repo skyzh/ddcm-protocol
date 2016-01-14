@@ -145,6 +145,10 @@ class TCPRPC(object):
             self.pack_remote(remote)
         ])
 
+    async def read_findNode(self, reader):
+        return None
+    async def read_pong_findNode(self, reader):
+        return None
 
     def pack_findValue(self, local, remote, echo, key):
         """Pack FindValue Message
@@ -187,6 +191,11 @@ class TCPRPC(object):
             struct.pack('>L', len(value)),
             value
         ])
+
+    async def read_findValue(self, reader):
+        return None
+    async def read_pong_findValue(self, reader):
+        return None
 
     def pack_reduce(self, local, remote, echo, keyStart, keyEnd):
         """Pack FindValue Message
@@ -233,6 +242,11 @@ class TCPRPC(object):
             value
         ])
 
+    async def read_reduce(self, reader):
+        return None
+    async def read_pong_reduce(self, reader):
+        return None
+    
     def get_command_string(self, id):
         return const.kad.command.COMMANDS[id]
 
@@ -266,12 +280,24 @@ class TCPRPC(object):
             id = await reader.readexactly(20),
             remote = await self.read_remote(reader)
         )
-        if command == const.kad.command.PING:
-            return command, echo, remoteNode, await self.read_ping(reader)
-        elif command == const.kad.command.PONG:
-            return command, echo, remoteNode, await self.read_pong(reader)
-        elif command == const.kad.command.STORE:
-            return command, echo, remoteNode, await self.read_store(reader)
-        elif command == const.kad.command.PONG_STORE:
-            return command, echo, remoteNode, await self.read_pong_store(reader)
-            
+        data = (command, echo, remoteNode)
+        if command is const.kad.command.PING:
+            return (*data, await self.read_ping(reader))
+        elif command is const.kad.command.PONG:
+            return (*data, await self.read_pong(reader))
+        elif command is const.kad.command.STORE:
+            return (*data, await self.read_store(reader))
+        elif command is const.kad.command.PONG_STORE:
+            return (*data, await self.read_pong_store(reader))
+        elif command is const.kad.command.FIND_NODE:
+            return (*data, await self.read_findNode(reader))
+        elif command is const.kad.command.PONG_FIND_NODE:
+            return (*data, await self.read_pong_findNode(reader))
+        elif command is const.kad.commmand.FIND_VALUE:
+            return (*data, await self.read_findValue(reader))
+        elif command is const.kad.commmand.PONG_FIND_VALUE:
+            return (*data, await self.read_pong_findValue(reader))
+        elif command is const.kad.command.REDUCE:
+            return (*data, await self.read_reduce(reader))
+        elif command is const.kad.command.PONG_REDUCE:
+            return (*data, await self.read_pong_reduce(reader))

@@ -86,6 +86,15 @@ class TCPProtocol(object):
             loop = self.loop
         )
 
+    async def _handle_pong_ping(self, echo, remoteNode, data):
+        self.__logger__.info("".join([
+            "PONG ",
+            codecs.encode(echo, "hex").decode(),
+            " from ",
+            remoteNode.get_hash_string()
+        ]))
+        await self.service.event.handle_pong_ping(echo, remoteNode, data)
+
     async def _handle_store(self, echo, remoteNode, data):
         self.__logger__.info("".join([
             "STORE ",
@@ -103,22 +112,6 @@ class TCPProtocol(object):
             loop = self.loop
         )
 
-
-    async def _handle_findNode(self, echo, remoteNode, data):
-        pass
-
-    async def _handle_findValue(self, echo, remoteNode, data):
-        pass
-
-    async def _handle_pong_ping(self, echo, remoteNode, data):
-        self.__logger__.info("".join([
-            "PONG ",
-            codecs.encode(echo, "hex").decode(),
-            " from ",
-            remoteNode.get_hash_string()
-        ]))
-        await self.service.event.handle_pong_ping(echo, remoteNode, data)
-
     async def _handle_pong_store(self, echo, remoteNode, data):
         self.__logger__.info("".join([
             "PONG_STORE ",
@@ -129,30 +122,47 @@ class TCPProtocol(object):
         await self.service.event.handle_pong_store(echo, remoteNode, data)
 
 
+    async def _handle_findNode(self, echo, remoteNode, data):
+        pass
+
     async def _handle_pong_findNode(self, echo, remoteNode, data):
+        pass
+
+    async def _handle_findValue(self, echo, remoteNode, data):
         pass
 
     async def _handle_pong_findValue(self, echo, remoteNode, data):
         pass
 
+    async def _handle_reduce(self, echo, remoteNode, data):
+        pass
+
+    async def _handle_pong_reduce(self, echo, remoteNode, data):
+        pass
+
     async def handle(self, reader):
         command, echo, remoteNode, data = await self.service.rpc.read_command(reader)
-        if command == const.kad.command.PING:
-            await self._handle_ping(echo, remoteNode, data)
-        elif command == const.kad.command.STORE:
-            await self._handle_store(echo, remoteNode, data)
-        elif command == const.kad.command.FIND_NODE:
-            await self._handle_findNode(echo, remoteNode, data)
-        elif command == const.kad.command.FIND_VALUE:
-            await self._handle_findValue(echo, remoteNode, data)
-        elif command == const.kad.command.PONG:
-            await self._handle_pong_ping(echo, remoteNode, data)
-        elif command == const.kad.command.PONG_STORE:
-            await self._handle_pong_store(echo, remoteNode, data)
-        elif command == const.kad.command.PONG_FIND_NODE:
-            await self._handle_pong_findNode(echo, remoteNode, data)
-        elif command == const.kad.command.PONG_FIND_VALUE:
-            await self._handle_pong_findValue(echo, remoteNode, data)
+        _data = (echo, remoteNode, data)
+        if command is const.kad.command.PING:
+            await self._handle_ping(*_data)
+        elif command is const.kad.command.STORE:
+            await self._handle_store(*_data)
+        elif command is const.kad.command.FIND_NODE:
+            await self._handle_findNode(*_data)
+        elif command is const.kad.command.FIND_VALUE:
+            await self._handle_findValue(*_data)
+        elif command is const.kad.command.PONG:
+            await self._handle_pong_ping(*_data)
+        elif command is const.kad.command.PONG_STORE:
+            await self._handle_pong_store(*_data)
+        elif command is const.kad.command.PONG_FIND_NODE:
+            await self._handle_pong_findNode(*_data)
+        elif command is const.kad.command.PONG_FIND_VALUE:
+            await self._handle_pong_findValue(*_data)
+        elif command is const.kad.command.REDUCE:
+            await self._handle_reduce(*_data)
+        elif command is const.kad.command.PONG_REDUCE:
+            await self._handle_pong_reduce(*_data)
         else:
             # TODO: Handle Unknown Command
             pass
