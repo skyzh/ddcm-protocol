@@ -179,6 +179,55 @@ class TCPRPCTest(unittest.TestCase):
         )
 
         self.assertEqual(_command, ddcm.const.kad.command.PONG_FIND_NODE)
+        self.assertEqual(_echo, echo)
         self.assertEqual(_remoteId, remoteId)
         self.assertEqual(_remoteNode.host, remoteNode.host)
         self.assertEqual(_remoteNode.port, remoteNode.port)
+
+    @TestCase
+    def test_pack_findValue(self, loop, reader, wsock, tcpService, echo):
+        key, value = self.get_key_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_findValue(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                key
+            )
+        )
+
+        _command, _echo, _remoteNode, (_key) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.FIND_VALUE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_key, key)
+
+    @TestCase
+    def test_pack_pong_findValue(self, loop, reader, wsock, tcpService, echo):
+        key, value = self.get_key_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_pong_findValue(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                key,
+                value
+            )
+        )
+
+        _command, _echo, _remoteNode, (_key, _value) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.PONG_FIND_VALUE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_key, key)
+        self.assertEqual(_value, value)

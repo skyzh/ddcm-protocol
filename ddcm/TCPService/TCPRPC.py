@@ -194,9 +194,14 @@ class TCPRPC(object):
         ])
 
     async def read_findValue(self, reader):
-        return None
+        key = await reader.readexactly(20)
+        return key
+
     async def read_pong_findValue(self, reader):
-        return None
+        key = await reader.readexactly(20)
+        len_value = struct.unpack('>L', await reader.readexactly(4))[0]
+        value = await reader.readexactly(len_value)
+        return key, value
 
     def pack_reduce(self, local, remote, echo, keyStart, keyEnd):
         """Pack FindValue Message
@@ -294,9 +299,9 @@ class TCPRPC(object):
             return (*data, await self.read_findNode(reader))
         elif command is const.kad.command.PONG_FIND_NODE:
             return (*data, await self.read_pong_findNode(reader))
-        elif command is const.kad.commmand.FIND_VALUE:
+        elif command is const.kad.command.FIND_VALUE:
             return (*data, await self.read_findValue(reader))
-        elif command is const.kad.commmand.PONG_FIND_VALUE:
+        elif command is const.kad.command.PONG_FIND_VALUE:
             return (*data, await self.read_pong_findValue(reader))
         elif command is const.kad.command.REDUCE:
             return (*data, await self.read_reduce(reader))
