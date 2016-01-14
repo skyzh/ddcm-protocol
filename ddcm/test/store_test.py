@@ -14,16 +14,24 @@ class StoreTest(unittest.TestCase):
     async def handle_events(self, service):
         pong_count = 0
         self.ping_sent = []
+        self.ping_recved = []
+        self.pong_sent = []
         self.pong_recved = []
-        self.sent_pair = []
+        self.pair_sent, self.pair_recved = [], []
+
         while pong_count < const.test.STORE_COUNT:
             event = await service.queue.get()
             if event["type"] is ddcm.const.kad.event.SEND_STORE:
-                self.ping_sent.append(event["data"]["data"][0])
-                self.sent_pair.append(event["data"]["data"])
+                self.ping_sent.append(event["data"]["echo"])
+                self.pair_sent.append(event["data"]["data"])
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_STORE:
-                self.pong_recved.append(event["data"]["data"])
+                self.pong_recved.append(event["data"]["echo"])
                 pong_count += 1
+            if event["type"] is ddcm.const.kad.event.SEND_PONG_STORE:
+                self.pong_sent.append(event["data"]["echo"])
+            if event["type"] is ddcm.const.kad.event.HANDLE_STORE:
+                self.ping_recved.append(event["data"]["echo"])
+                self.pair_recved.append(event["data"]["data"])
 
     def StoreTestCase(func):
         async def _deco(*args, **kwargs):
@@ -40,14 +48,21 @@ class StoreTest(unittest.TestCase):
 
             await service.stop()
 
-            self.ping_sent.sort()
-            self.pong_recved.sort()
+            for event_list in [self.ping_sent, self.ping_recved, self.pong_sent, self.pong_recved, self.pair_sent, self.pair_recved]:
+                event_list.sort()
 
             self.assertEqual(len(self.ping_sent), const.test.STORE_COUNT)
+            self.assertEqual(len(self.ping_recved), const.test.STORE_COUNT)
+            self.assertEqual(len(self.pong_sent), const.test.STORE_COUNT)
             self.assertEqual(len(self.pong_recved), const.test.STORE_COUNT)
             self.assertEqual(self.ping_sent, self.pong_recved)
+            self.assertEqual(self.ping_sent, self.ping_recved)
+            self.assertEqual(self.ping_sent, self.pong_sent)
 
-            for data in self.sent_pair:
+            for sent, recved in zip(self.pair_sent, self.pair_recved):
+                self.assertEqual(sent, recved)
+                
+            for data in self.pair_sent:
                 self.assertEqual(await service.storage.exist(data[0]), True)
                 self.assertEqual(await service.storage.get(data[0]), data[1])
 
