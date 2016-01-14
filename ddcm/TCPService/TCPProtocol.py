@@ -65,11 +65,76 @@ class TCPProtocol(object):
             )
         )
 
-    async def _do_findNode(self, echo, nodeID):
-        pass
+    async def _do_findNode(self, writer, echo, remoteId):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_findNode(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                remoteId
+            )
+        )
 
-    async def _do_findValue(self, echo, key):
-        pass
+    async def _do_pong_findNode(self, writer, echo, remoteId, remote):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong_findNode(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                remoteId,
+                remote
+            )
+        )
+
+    async def _do_findValue(self, writer, echo, key):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_findValue(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                key
+            )
+        )
+
+    async def _do_pong_findValue(self, writer, echo, key, value):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong_findValue(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                key,
+                value
+            )
+        )
+
+    async def _do_reduce(self, writer, echo, keyStart, keyEnd):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_reduce(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                keyStart,
+                keyEnd
+            )
+        )
+
+    async def _do_pong_reduce(self, writer, echo,  keyStart, keyEnd, value):
+        await self._do_send(
+            writer,
+            self.service.rpc.pack_pong_reduce(
+                self.service.node,
+                self.service.server.remote,
+                echo,
+                keyStart,
+                keyEnd,
+                value
+            )
+        )
 
     async def _handle_ping(self, echo, remoteNode, data):
         self.__logger__.info("".join([
