@@ -41,28 +41,42 @@ class TCPCall(object):
         await self.service.event.do_store(remote, echo, key, value)
 
 
-    async def findNode(self, remote):
+    async def findNode(self, remote, remoteId):
         """findNode
 
         Args:
-            remote: Remote Hash
+            remote: Remote Destination
+            remoteId: Remote Hash
         Returns:
-            Remote Node
+            (Remote ID, Remote Node)
         """
         pass
 
-    async def findValue(self, key):
+    async def findValue(self, remote, key):
         """findValue
 
         Args:
+            remote: Remote Destination
             key: Key
         Returns:
             (key, value)
         """
         pass
 
+    async def findReduce(self, remote, keyStart, keyEnd):
+        """findReduce
+
+        Args:
+            remote: Remote Destination
+            keyStart: Start Key
+            keyEnd: End Key
+        Returns:
+            (keyStart, keyEnd, value)
+        """
+        pass
+
     async def pong_ping(self, remote, echo):
-        """Pong
+        """pong_ping
 
         Args:
             remote: Remote Destination
@@ -76,7 +90,7 @@ class TCPCall(object):
         await self.service.event.do_pong_ping(remote, echo)
 
     async def pong_store(self, remote, echo, key):
-        """
+        """pong_store
 
         Args:
             remote: Remote Destination
@@ -91,23 +105,40 @@ class TCPCall(object):
 
         await self.service.event.do_pong_store(remote, echo, key)
 
-    async def pong_findNode(self, remote, echo):
-        """Pong
+    async def pong_findNode(self, remote, echo, remoteId, remoteNode):
+        """pong_findNode
 
         Args:
             remote: Remote Destination
             echo: Echo Value
+            remoteId: Remote ID found
+            remoteNode: Remote Address
         Returns:
             None
         """
         pass
-        
-    async def pong_findValue(self, remote, echo):
-        """Pong
+
+    async def pong_findValue(self, remote, echo, key, value):
+        """pong_findeValue
 
         Args:
             remote: Remote Destination
             echo: Echo Value
+            key: Key found
+            value: value found
+        Returns:
+            None
+        """
+        pass
+
+    async def pong_findReduce(self, remote, echo, keyStart, keyEnd, value):
+        """pong_findReduce
+
+        Args:
+            remote: Remote Destination
+            keyStart: Start Key
+            keyEnd: End Key
+            value: Reduced value
         Returns:
             None
         """
