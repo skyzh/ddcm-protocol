@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/SkyZH/ddcm-protocol.svg)](https://travis-ci.org/SkyZH/ddcm-protocol)
 
+**Python 3.5 is required for its features of asyncio**
+
 DDCM = Dawn Distributed Computing Model
 
 DDCM-Protocol is based on kademlia, which is a peer-to-peer protocol.

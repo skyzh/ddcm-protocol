@@ -61,7 +61,7 @@ class StoreTest(unittest.TestCase):
 
             for sent, recved in zip(self.pair_sent, self.pair_recved):
                 self.assertEqual(sent, recved)
-                
+
             for data in self.pair_sent:
                 self.assertEqual(await service.storage.exist(data[0]), True)
                 self.assertEqual(await service.storage.get(data[0]), data[1])

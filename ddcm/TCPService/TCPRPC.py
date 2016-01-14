@@ -105,13 +105,14 @@ class TCPRPC(object):
         key = await reader.readexactly(20)
         return key
 
-    def pack_findNode(self, local, echo, remote):
+    def pack_findNode(self, local, remote, echo, remoteId):
         """Pack FindNode Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
-            remote: Hash of Node to Ping
+            remoteId: Hash of Node to Ping
 
         Returns:
             Packed Data to Send
@@ -121,16 +122,17 @@ class TCPRPC(object):
             echo,
             local.id,
             self.pack_remote(self.service.server.remote),
-            remote
+            remoteId
         ])
 
-    def pack_pong_findNode(self, local, echo, remote):
+    def pack_pong_findNode(self, local, remote, echo, remoteId):
         """Pack Pong FindNode Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
-            remote: Hash of Node to Ping
+            remoteId: Hash of Node to return
 
         Returns:
             Packed Data to Send
@@ -144,11 +146,12 @@ class TCPRPC(object):
         ])
 
 
-    def pack_findValue(self, local, echo, key):
+    def pack_findValue(self, local, remote, echo, key):
         """Pack FindValue Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
             key: Key to Find
 
@@ -163,11 +166,12 @@ class TCPRPC(object):
             key
         ])
 
-    def pack_pong_findValue(self, local, echo, key, value):
+    def pack_pong_findValue(self, local, remote, echo, key, value):
         """Pack Pong FindValue Message
 
         Args:
             local: Self Node
+            remote: Self Address
             echo: Random Echo Message
             key, value: (key, value) to send
 
@@ -180,6 +184,51 @@ class TCPRPC(object):
             local.id,
             self.pack_remote(self.service.server.remote),
             key,
+            struct.pack('>L', len(value)),
+            value
+        ])
+
+    def pack_reduce(self, local, remote, echo, keyStart, keyEnd):
+        """Pack FindValue Message
+
+        Args:
+            local: Self Node
+            remote: Self Address
+            echo: Random Echo Message
+            keyStart, keyEnd: Keys to Reduce
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.REDUCE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            keyStart,
+            keyEnd
+        ])
+
+    def pack_pong_reduce(self, local, remote, echo, keyStart, keyEnd, value):
+        """Pack Pong FindValue Message
+
+        Args:
+            local: Self Node
+            remote: Self Address
+            echo: Random Echo Message
+            key, value: (key, value) to send
+            keyStart, keyEnd: Keys to Reduce
+
+        Returns:
+            Packed Data to Send
+        """
+        return b"".join([
+            struct.pack('B', const.kad.command.PONG_REDUCE),
+            echo,
+            local.id,
+            self.pack_remote(self.service.server.remote),
+            keyStart,
+            keyEnd,
             struct.pack('>L', len(value)),
             value
         ])
@@ -225,3 +274,4 @@ class TCPRPC(object):
             return command, echo, remoteNode, await self.read_store(reader)
         elif command == const.kad.command.PONG_STORE:
             return command, echo, remoteNode, await self.read_pong_store(reader)
+            
