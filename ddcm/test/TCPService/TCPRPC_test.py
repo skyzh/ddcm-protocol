@@ -16,6 +16,9 @@ class TCPRPCTest(unittest.TestCase):
     def get_key_pair(self):
         return bytes(random.getrandbits(8) for i in range(20)), bytes(random.getrandbits(8) for i in range(120))
 
+    def get_reduce_pair(self):
+        return bytes(random.getrandbits(8) for i in range(20)), bytes(random.getrandbits(8) for i in range(20)), bytes(random.getrandbits(8) for i in range(120))
+
     def TestCase(func):
         def _deco(*args, **kwargs):
             config = ddcm.utils.load_config("config.json")
@@ -230,4 +233,56 @@ class TCPRPCTest(unittest.TestCase):
         self.assertEqual(_command, ddcm.const.kad.command.PONG_FIND_VALUE)
         self.assertEqual(_echo, echo)
         self.assertEqual(_key, key)
+        self.assertEqual(_value, value)
+
+    @TestCase
+    def test_pack_reduce(self, loop, reader, wsock, tcpService, echo):
+        keyS, keyE, value = self.get_reduce_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_reduce(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                keyS,
+                keyE
+            )
+        )
+
+        _command, _echo, _remoteNode, (_keyS, _keyE) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.REDUCE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_keyS, keyS)
+        self.assertEqual(_keyE, keyE)
+
+    @TestCase
+    def test_pack_pong_reduce(self, loop, reader, wsock, tcpService, echo):
+        keyS, keyE, value = self.get_reduce_pair()
+
+        wsock.send(
+            tcpService.rpc.pack_pong_reduce(
+                tcpService.node,
+                tcpService.server.remote,
+                echo,
+                keyS,
+                keyE,
+                value
+            )
+        )
+
+        _command, _echo, _remoteNode, (_keyS, _keyE, _value) = loop.run_until_complete(
+            asyncio.ensure_future(
+                tcpService.rpc.read_command(reader)
+            )
+        )
+
+        self.assertEqual(_command, ddcm.const.kad.command.PONG_REDUCE)
+        self.assertEqual(_echo, echo)
+        self.assertEqual(_keyS, keyS)
+        self.assertEqual(_keyE, keyE)
         self.assertEqual(_value, value)

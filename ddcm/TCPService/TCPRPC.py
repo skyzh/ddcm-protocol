@@ -249,9 +249,16 @@ class TCPRPC(object):
         ])
 
     async def read_reduce(self, reader):
-        return None
+        keyStart = await reader.readexactly(20)
+        keyEnd = await reader.readexactly(20)
+        return keyStart, keyEnd
+
     async def read_pong_reduce(self, reader):
-        return None
+        keyStart = await reader.readexactly(20)
+        keyEnd = await reader.readexactly(20)
+        len_value = struct.unpack('>L', await reader.readexactly(4))[0]
+        value = await reader.readexactly(len_value)
+        return keyStart, keyEnd, value
 
     def get_command_string(self, id):
         return const.kad.command.COMMANDS[id]
