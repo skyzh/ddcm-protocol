@@ -23,7 +23,7 @@ class StoreTest(unittest.TestCase):
                 self.sent_pair.append(event["data"]["data"])
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_STORE:
                 self.pong_recved.append(event["data"]["data"])
-                pong_count = pong_count + 1
+                pong_count += 1
 
     def StoreTestCase(func):
         async def _deco(*args, **kwargs):

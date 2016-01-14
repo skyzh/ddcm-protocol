@@ -211,7 +211,7 @@ class TCPRPC(object):
         Returns:
             JSON Data
         """
-        command, = struct.unpack('B', await reader.readexactly(1))
+        command = struct.unpack('B', await reader.readexactly(1))[0]
         echo = await reader.readexactly(4)
         remoteNode = Node(
             id = await reader.readexactly(20),
