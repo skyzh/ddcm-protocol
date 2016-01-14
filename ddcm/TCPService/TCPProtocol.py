@@ -24,7 +24,7 @@ class TCPProtocol(object):
     async def _do_ping(self, writer, echo):
         await self._do_send(
             writer,
-            self.service.rpc.pack_pong(
+            self.service.rpc.pack_ping(
                 self.service.node,
                 self.service.server.remote,
                 echo
@@ -93,7 +93,7 @@ class TCPProtocol(object):
             " from ",
             remoteNode.get_hash_string()
         ]))
-        
+
         await self.service.storage.store(*data)
 
         await self.service.event.handle_store(echo, remoteNode, data)
