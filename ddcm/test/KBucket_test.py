@@ -64,3 +64,13 @@ class KBucketTest(unittest.TestCase):
         bucket.addNode(nodes[0])
         self.assertFalse(bucket.isNewNode(nodes[0]))
         self.assertTrue(bucket.isNewNode(nodes[1]))
+
+    @TestCase(1, 2 ** 4 - 1, 2)
+    def test_removeNode(self, bucket):
+        nodes = [self.get_random_node() for i in range(3)]
+        self.assertTrue(bucket.addNode(nodes[0]))
+        self.assertTrue(bucket.addNode(nodes[1]))
+        self.assertFalse(bucket.addNode(nodes[2]))
+        self.assertTrue(bucket.isNewNode(nodes[2]))
+        bucket.removeNode(nodes[0])
+        self.assertFalse(bucket.isNewNode(nodes[2]))

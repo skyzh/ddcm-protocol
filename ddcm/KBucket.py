@@ -23,7 +23,7 @@ class KBucket(object):
 
     def isInRange(self, node):
         return self.range[0] <= node.hash <= self.range[1]
-        
+
     def isNewNode(self, node):
         return node.id not in self.nodes
 
@@ -42,9 +42,9 @@ class KBucket(object):
         if node.id not in self.nodes:
             return
         del self.nodes[node.id]
-        if len(self.replacementNodes) > 0:
-            __newnode = self.replacementNodes.pop()
-            self.nodes[__newnode.id] = __newnode
+        if len(self.replaceNodes) > 0:
+            id, rNode = self.replaceNodes.popitem()
+            self.nodes[id] = rNode
 
     def depth(self):
         return len(utils.commonPrefix([n.id for n in self.nodes.values()]))
