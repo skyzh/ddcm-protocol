@@ -74,3 +74,6 @@ class KBucketTest(unittest.TestCase):
         self.assertTrue(bucket.isNewNode(nodes[2]))
         bucket.removeNode(nodes[0])
         self.assertFalse(bucket.isNewNode(nodes[2]))
+
+    @TestCase(1, 2 ** 4 - 1, 2)
+    def test_depth(self, bucket):
