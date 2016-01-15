@@ -2,6 +2,7 @@ from .. import utils
 
 from ..Node import Node
 from ..Remote import Remote
+from ..Route import Route
 
 from .TCPServer import TCPServer
 from .TCPProtocol import TCPProtocol
@@ -60,6 +61,8 @@ class TCPService(object):
         )
         self.queue = self.service.queue
         self.storage = self.service.storage
+        self.route = Route(self, loop, config["kbucket"]["ksize"], self.node)
+
 
     async def start(self):
         await self.server.start_server()

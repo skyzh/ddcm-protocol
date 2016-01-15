@@ -9,6 +9,7 @@ from .Remote import Remote
 from .Storage import Storage
 from .Logger import Logger
 from .TCPService import TCPService
+from .Route import Route
 
 class Service(object):
     """Service

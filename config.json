@@ -17,5 +17,8 @@
   },
   "node": {
     "id": "9e936dd8926a14fe8b8c877f716e7e3909d88db5"
+  },
+  "kbucket": {
+    "ksize": 20
   }
 }

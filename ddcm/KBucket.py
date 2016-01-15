@@ -1,10 +1,9 @@
+from collections import OrderedDict
+
 from . import utils
 
 class KBucket(object):
-    def __init__(self, loop, service, left, right, kSize):
-        self.loop = loop
-        self.service = service
-
+    def __init__(self, left, right, kSize):
         self.range = (left, right)
         self.nodes = OrderedDict()
         self.replaceNodes = OrderedDict()
@@ -15,16 +14,16 @@ class KBucket(object):
 
     def split(self):
         mid = (self.range[0] + self.range[1]) / 2
-        leftBucket = KBucket(self.range[0], midpoint, self.ksize)
-        rightBucket = KBucket(midpoint + 1, self.range[1], self.ksize)
+        leftBucket = KBucket(self.range[0], mid - 1, self.ksize)
+        rightBucket = KBucket(mid, self.range[1], self.ksize)
         for node in self.nodes.values():
-            thisBucket = leftBucket if node.hash <= midpoint else rightBucket
+            thisBucket = leftBucket if node.hash < mid else rightBucket
             thisBucket.nodes[node.id] = node
         return (leftBucket, rightBucket)
 
     def isInRange(self, node):
         return self.range[0] <= node.hash <= self.range[1]
-
+        
     def isNewNode(self, node):
         return node.id not in self.nodes
 
@@ -35,7 +34,7 @@ class KBucket(object):
         elif len(self.nodes) < self.ksize:
             self.nodes[node.id] = node
         else:
-            self.replaceNodes.push(node)
+            self.replaceNodes[node.id] = node
             return False
         return True
 
@@ -52,3 +51,6 @@ class KBucket(object):
 
     def firstNode(self):
         return self.nodes[0]
+
+    def __len__(self):
+        return len(self.nodes)

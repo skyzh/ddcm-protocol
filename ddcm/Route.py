@@ -7,7 +7,7 @@ class Route(object):
 
         self.selfNode = selfNode
         self.ksize = kSize
-        self.buckets = [KBucket(0, 2 ** 160, self.ksize)]
+        self.buckets = [KBucket(1, 2 ** 160 - 1, self.ksize)]
 
     def getBucket(self, node):
         for index, bucket in enumerate(self.buckets):
