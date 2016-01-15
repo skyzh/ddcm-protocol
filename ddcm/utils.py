@@ -10,8 +10,7 @@ def commonPrefix(data):
         def _bits(n):
             return reversed([0 if (n & (1 << i)) is 0 else 1 for i in range(8)])
         return list(itertools.chain(*[list(_bits(n)) for n in item]))
-
-    return len(os.path.commonprefix([bits(item) for item in data]))
+    return os.path.commonprefix([bits(item) for item in data])
 
 def get_echo_bytes():
     return bytes(random.getrandbits(8) for i in range(4))

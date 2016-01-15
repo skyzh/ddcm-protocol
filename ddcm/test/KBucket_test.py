@@ -77,3 +77,7 @@ class KBucketTest(unittest.TestCase):
 
     @TestCase(1, 2 ** 4 - 1, 2)
     def test_depth(self, bucket):
+        bucket.addNode(self.get_id_node(254))
+        bucket.addNode(self.get_id_node(253))
+        bucket.addNode(self.get_id_node(252))
+        self.assertEqual(bucket.depth(), 8 - 2 + 8 * 19)
