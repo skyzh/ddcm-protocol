@@ -28,7 +28,7 @@ class Route(object):
         return self.buckets[__index].isNewNode(node)
 
     def addNode(self, node):
-        index = self.getBucketFor(node)
+        index = self.getBucket(node)
         bucket = self.buckets[index]
 
         if bucket.addNode(node):
@@ -37,4 +37,5 @@ class Route(object):
             self.splitBucket(index)
             self.addNode(node)
         else:
-            self.protocol.callPing(bucket.firstNode())
+            #TODO: Check if the first node is online
+            pass
