@@ -11,7 +11,7 @@ class Route(object):
 
     def getBucket(self, node):
         for index, bucket in enumerate(self.buckets):
-            if node.hash < bucket.range[1]:
+            if node.hash <= bucket.range[1]:
                 return index
 
     def splitBucket(self, index):
