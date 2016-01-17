@@ -13,8 +13,8 @@ class KBucket(object):
         return self.nodes.values()
 
     def split(self):
-        mid = (self.range[0] + self.range[1]) / 2
-        leftBucket = KBucket(self.range[0], mid - 1, self.ksize)
+        mid = int((self.range[0] + self.range[1]) >> 1)
+        leftBucket = KBucket(self.range[0], mid, self.ksize)
         rightBucket = KBucket(mid, self.range[1], self.ksize)
         for node in self.nodes.values():
             thisBucket = leftBucket if node.hash < mid else rightBucket
@@ -22,7 +22,7 @@ class KBucket(object):
         return (leftBucket, rightBucket)
 
     def isInRange(self, node):
-        return self.range[0] <= node.hash <= self.range[1]
+        return self.range[0] <= node.hash < self.range[1]
 
     def isNewNode(self, node):
         return node.id not in self.nodes

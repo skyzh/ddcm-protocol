@@ -35,11 +35,10 @@ class KBucketTest(unittest.TestCase):
         bucket.addNode(self.get_id_node(7))
         bucket.addNode(self.get_id_node(8))
         one, two = bucket.split()
-        self.assertEqual(one.range, (1, 7))
+        self.assertEqual(one.range, (1, 8))
         self.assertEqual(two.range, (8, 15))
         self.assertEqual(len(one), 1)
         self.assertEqual(len(two), 1)
-
 
     @TestCase(1, 2 ** 4 - 1, 5)
     def test_addNode(self, bucket):

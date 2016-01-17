@@ -7,11 +7,11 @@ class Route(object):
 
         self.selfNode = selfNode
         self.ksize = kSize
-        self.buckets = [KBucket(1, 2 ** 160 - 1, self.ksize)]
+        self.buckets = [KBucket(0, 2 ** 160, self.ksize)]
 
-    def getBucket(self, node):
+    def getBucket(self, distance):
         for index, bucket in enumerate(self.buckets):
-            if node.hash <= bucket.range[1]:
+            if bucket.range[0] <= distance < bucket.range[1]:
                 return index
 
     def splitBucket(self, index):
@@ -20,20 +20,20 @@ class Route(object):
         self.buckets.insert(index + 1, rightBucket)
 
     def removeNode(self, node):
-        __index = self.getBucket(node)
+        __index = self.getBucket(node.distance(self.selfNode))
         self.buckets[__index].removeNode(node)
 
     def isNewNode(self, node):
-        __index = self.getBucket(node)
+        __index = self.getBucket(node.distance(self.selfNode))
         return self.buckets[__index].isNewNode(node)
 
     def addNode(self, node):
-        index = self.getBucket(node)
+        index = self.getBucket(node.distance(self.selfNode))
         bucket = self.buckets[index]
 
         if bucket.addNode(node):
             return
-        elif bucket.hasInRange(self.node) or bucket.depth() % 5 != 0:
+        elif bucket.isInRange(node) or bucket.depth() % 5 != 0:
             self.splitBucket(index)
             self.addNode(node)
         else:
