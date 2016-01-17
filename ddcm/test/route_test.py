@@ -55,20 +55,20 @@ class RouteTest(unittest.TestCase):
     @TestCase(
         2,
         ddcm.Node(
-            b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01'
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
         )
     )
     def test_addNode_split(self, route):
         nodes = map(
             self.get_id_node, [
-                2 ** 80 - 10,
-                2 ** 80 - 8,
-                2 ** 80 - 6,
-                2 ** 80 + 2,
-                2 ** 80 + 4
+                2 ** 155,
+                2 ** 156,
+                2 ** 157,
+                2 ** 158,
+                2 ** 159
             ]
         )
         for node in nodes:
             route.addNode(node)
 
-        self.assertEqual(len(route.buckets), 2)
+        self.assertEqual(len(route.buckets), 4)
