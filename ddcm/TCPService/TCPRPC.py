@@ -125,7 +125,7 @@ class TCPRPC(object):
             remoteId
         ])
 
-    def pack_pong_findNode(self, local, remote, echo, remoteId, remoteNode):
+    def pack_pong_findNode(self, local, remote, echo, remoteId, remoteNodes):
         """Pack Pong FindNode Message
 
         Args:
@@ -143,13 +143,21 @@ class TCPRPC(object):
             local.id,
             self.pack_remote(self.service.server.remote),
             remoteId,
-            self.pack_remote(remoteNode)
+            struct.pack('B', len(remoteNodes)),
+            b"".join([
+                self.pack_remote(remoteNode) for remoteNode in remoteNodes
+            ])
         ])
 
     async def read_findNode(self, reader):
         return await reader.readexactly(20)
     async def read_pong_findNode(self, reader):
-        return await reader.readexactly(20), await self.read_remote(reader)
+        remoteId = await reader.readexactly(20)
+        remoteCount = struct.unpack('B', await reader.readexactly(1))[0]
+        remoteNodes = []
+        for i in range(remoteCount):
+            remoteNodes.append(await self.read_remote(reader))
+        return remoteId, remoteCount, remoteNodes
 
     def pack_findValue(self, local, remote, echo, key):
         """Pack FindValue Message

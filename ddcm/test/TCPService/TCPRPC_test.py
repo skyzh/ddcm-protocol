@@ -163,7 +163,12 @@ class TCPRPCTest(unittest.TestCase):
     @TestCase
     def test_pack_pong_findNode(self, loop, reader, wsock, tcpService, echo):
         remoteId = ddcm.utils.get_random_node_id()
-        remoteNode = ddcm.Remote(host = "59.48.23.233", port=23876)
+        remoteNodes = [
+            ddcm.Remote(
+                host = "59.48.23.233",
+                port=random.randrange(1, 65534)
+            ) for i in range(10)
+        ]
 
         wsock.send(
             tcpService.rpc.pack_pong_findNode(
@@ -171,11 +176,11 @@ class TCPRPCTest(unittest.TestCase):
                 tcpService.server.remote,
                 echo,
                 remoteId,
-                remoteNode
+                remoteNodes
             )
         )
 
-        _command, _echo, _remoteNode, (_remoteId, _remoteNode) = loop.run_until_complete(
+        _command, _echo, _remoteNode, (_remoteId, _remoteNodeCount, _remoteNodes) = loop.run_until_complete(
             asyncio.ensure_future(
                 tcpService.rpc.read_command(reader)
             )
@@ -184,8 +189,10 @@ class TCPRPCTest(unittest.TestCase):
         self.assertEqual(_command, ddcm.const.kad.command.PONG_FIND_NODE)
         self.assertEqual(_echo, echo)
         self.assertEqual(_remoteId, remoteId)
-        self.assertEqual(_remoteNode.host, remoteNode.host)
-        self.assertEqual(_remoteNode.port, remoteNode.port)
+        self.assertEqual(_remoteNodeCount, len(remoteNodes))
+        for i in range(len(remoteNodes)):
+            self.assertEqual(_remoteNodes[i].host, remoteNodes[i].host)
+            self.assertEqual(_remoteNodes[i].port, remoteNodes[i].port)
 
     @TestCase
     def test_pack_findValue(self, loop, reader, wsock, tcpService, echo):

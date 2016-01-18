@@ -56,7 +56,7 @@ class TCPCall(object):
         reader, writer = await remote.connect_tcp(self.loop)
         await self.service.protocol._do_findNode(writer, *data)
         writer.close()
-        
+
         await self.service.event.do_findNode(remote, *data)
 
     async def findValue(self, remote, key):
@@ -125,7 +125,7 @@ class TCPCall(object):
 
         await self.service.event.do_pong_store(remote, *data)
 
-    async def pong_findNode(self, remote, echo, remoteId, remoteNode):
+    async def pong_findNode(self, remote, echo, remoteId, remoteNodes):
         """pong_findNode
 
         Args:
@@ -136,7 +136,7 @@ class TCPCall(object):
         Returns:
             None
         """
-        data = (echo, key)
+        data = (echo, remoteId, remoteNodes)
         reader, writer = await remote.connect_tcp(self.loop)
         await self.service.protocol._do_pong_findNode(writer, *data)
         writer.close()
