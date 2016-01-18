@@ -162,9 +162,7 @@ class TCPProtocol(object):
             " from ",
             remoteNode.get_hash_string()
         ]))
-
-        await self.service.storage.store(*data)
-
+        
         await self.service.event.handle_store(echo, remoteNode, data)
 
     async def _handle_pong_store(self, echo, remoteNode, data):

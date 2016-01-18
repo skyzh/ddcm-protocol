@@ -40,6 +40,8 @@ class Service(object):
                     loop = loop
                 )
             elif event["type"] is const.kad.event.HANDLE_STORE:
+                await service.storage.store(*event["data"]["data"])
+                
                 asyncio.ensure_future(
                     service.tcpService.call.pong_store(
                         event["data"]["remoteNode"].remote,
@@ -48,6 +50,7 @@ class Service(object):
                     ),
                     loop = loop
                 )
+
             if debug_enabled:
                 await service.debugQueue.put(event)
 
