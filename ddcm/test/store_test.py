@@ -20,7 +20,7 @@ class StoreTest(unittest.TestCase):
         self.pair_sent, self.pair_recved = [], []
 
         while pong_count < const.test.STORE_COUNT:
-            event = await service.queue.get()
+            event = await service.debugQueue.get()
             if event["type"] is ddcm.const.kad.event.SEND_STORE:
                 self.ping_sent.append(event["data"]["echo"])
                 self.pair_sent.append(event["data"]["data"])

@@ -7,7 +7,7 @@ class TCPEvent(object):
     def __init__(self, loop, service):
         self.loop = loop
         self.service = service
-        self.enabled = self.service.config["debug"]["events"]
+        self.enabled = True
 
     async def add_event(self, event_type, data = None):
         if self.enabled:

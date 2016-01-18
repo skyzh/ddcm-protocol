@@ -22,8 +22,8 @@ class Node(object):
         self.remote = remote
         self.hash = int.from_bytes(id, byteorder="big")
 
-    def distance(self, node):
-        return self.hash ^ node.hash
+    def distance(self, nodeHash):
+        return self.hash ^ nodeHash
 
     def get_hash_string(self):
         return codecs.encode(self.id, "hex").decode()

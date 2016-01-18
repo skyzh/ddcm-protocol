@@ -146,11 +146,6 @@ class TCPProtocol(object):
 
         await self.service.event.handle_ping(echo, remoteNode, data)
 
-        asyncio.ensure_future(
-            self.service.call.pong_ping(remoteNode.remote, echo),
-            loop = self.loop
-        )
-
     async def _handle_pong_ping(self, echo, remoteNode, data):
         self.__logger__.info("".join([
             "PONG ",
@@ -171,11 +166,6 @@ class TCPProtocol(object):
         await self.service.storage.store(*data)
 
         await self.service.event.handle_store(echo, remoteNode, data)
-
-        asyncio.ensure_future(
-            self.service.call.pong_store(remoteNode.remote, echo, data[0]),
-            loop = self.loop
-        )
 
     async def _handle_pong_store(self, echo, remoteNode, data):
         self.__logger__.info("".join([

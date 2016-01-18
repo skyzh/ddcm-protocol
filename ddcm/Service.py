@@ -26,6 +26,32 @@ class Service(object):
         queue:        Kademlia Event Queue
     """
 
+    async def handle_events(self, service, loop):
+        debug_enabled = service.config["debug"]["events"]
+        while True:
+            event = await service.queue.get()
+            if event["type"] is const.kad.event.SERVICE_SHUTDOWN:
+                break
+            elif event["type"] is const.kad.event.HANDLE_PING:
+                asyncio.ensure_future(
+                    service.tcpService.call.pong_ping(
+                        event["data"]["remoteNode"].remote, event["data"]["echo"]
+                    ),
+                    loop = loop
+                )
+            elif event["type"] is const.kad.event.HANDLE_STORE:
+                asyncio.ensure_future(
+                    service.tcpService.call.pong_store(
+                        event["data"]["remoteNode"].remote,
+                        event["data"]["echo"],
+                        event["data"]["data"][0]
+                    ),
+                    loop = loop
+                )
+            if debug_enabled:
+                await service.debugQueue.put(event)
+
+
     def __init__(self, config, loop):
         self.config = config
         self.loop = loop
@@ -35,12 +61,22 @@ class Service(object):
             loop=loop
         )
 
+        self.debugQueue = asyncio.Queue(
+            const.kad.service.MESSAGE_QUEUE_MAXSIZE,
+            loop=loop
+        )
+
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
 
 
         self.storage = Storage()
-
+        self.route = Route(
+            self,
+            loop,
+            config["kbucket"]["ksize"],
+            config["node"]["id"]
+        )
         self.tcpService = TCPService(config, self, loop)
 
 
@@ -48,6 +84,20 @@ class Service(object):
         await self.tcpService.start()
         self.__logger__.info("DDCM Service has been started.")
 
+        await self.queue.put({
+            "service": const.kad.event.Service,
+            "type": const.kad.event.SERVICE_START,
+            "data": None
+        })
+
+        asyncio.ensure_future(self.handle_events(self, self.loop))
+
     async def stop(self):
+        await self.queue.put({
+            "service": const.kad.event.Service,
+            "type": const.kad.event.SERVICE_SHUTDOWN,
+            "data": None
+        })
+
         await self.tcpService.stop()
         self.__logger__.info("DDCM Service has been stopped.")

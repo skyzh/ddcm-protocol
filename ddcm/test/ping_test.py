@@ -17,7 +17,7 @@ class PingTest(unittest.TestCase):
         self.pong_sent = []
         self.pong_recved = []
         while pong_count < const.test.PING_COUNT:
-            event = await service.queue.get()
+            event = await service.debugQueue.get()
             if event["type"] is ddcm.const.kad.event.SEND_PING:
                 self.ping_sent.append(event["data"]["echo"])
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_PING:

@@ -25,7 +25,7 @@ class RouteTest(unittest.TestCase):
     def TestCase(kSize, selfNode):
         route = ddcm.Route(
             None, None, kSize,
-            selfNode or ddcm.Node(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+            selfNode or 0
         )
         def __deco(func):
             def _deco(*args, **kwargs):
@@ -54,9 +54,7 @@ class RouteTest(unittest.TestCase):
 
     @TestCase(
         2,
-        ddcm.Node(
-            b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-        )
+        0
     )
     def test_addNode_split(self, route):
         nodes = map(
