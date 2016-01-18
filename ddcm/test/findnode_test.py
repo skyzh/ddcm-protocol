@@ -31,7 +31,8 @@ class FindNodeTest(unittest.TestCase):
             (name, services[name].debugQueue) for name in services
         ])
         self.pong_recved = {"A": 0, "B": 0, "C": 0}
-        while True:
+        pong_recved_count = 0
+        while pong_recved_count < const.test.PING_MULTI_COUNT * 9:
             name, event = await queue.get()
             if event["type"] is ddcm.const.kad.event.SERVICE_SHUTDOWN:
                 break
@@ -42,7 +43,8 @@ class FindNodeTest(unittest.TestCase):
                     "name": name,
                     "target": event["data"]["remoteNode"].get_hash_string()
                 })
-                self.ping_recved[name] += 1
+                self.pong_recved[name] += 1
+                pong_recved_count += 1
             if event["type"] is ddcm.const.kad.event.SEND_PONG_PING:
                 pass
             if event["type"] is ddcm.const.kad.event.HANDLE_PING:
