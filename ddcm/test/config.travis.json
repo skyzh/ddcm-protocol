@@ -5,7 +5,7 @@
   },
   "debug": {
     "logging": {
-      "level": "ERROR",
+      "level": "DEBUG",
       "format": "[%(levelname)s:%(name)s] %(asctime)-15s %(message)s"
     },
     "asyncio": {

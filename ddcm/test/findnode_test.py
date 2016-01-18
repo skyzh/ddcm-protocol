@@ -34,19 +34,10 @@ class FindNodeTest(unittest.TestCase):
 
             loop, services, configs, self = kwargs['loop'], kwargs['services'], kwargs['configs'], kwargs['self']
 
-            await asyncio.wait(
-                [asyncio.ensure_future(
-                    self.handle_events(service)
-                )],
-                timeout = const.test.PING_TIMEOUT
-            )
-
             return ret
         return _deco
 
-    @utils.MultiNetworkTestCase("A")
-    @utils.MultiNetworkTestCase("B")
-    @utils.MultiNetworkTestCase("C")
+    @utils.MultiNetworkTestCase(["A", "B", "C"])
     @FindNodeTestCase
-    async def test_ping(self, loop, configs, services):
-        pass
+    async def test_findNode(self, loop, configs, services):
+        sA, sB, sC = services["A"], services["B"], services["C"]

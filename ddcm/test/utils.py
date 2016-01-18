@@ -30,7 +30,7 @@ def MultiNetworkTestCase(names):
     def __deco(func):
         def _deco(self, *args, **kwargs):
             config = ddcm.utils.load_config("config.json")
-            
+
             loop = asyncio.get_event_loop()
             loop.set_debug(config['debug']['asyncio']['enabled'])
 
@@ -38,9 +38,12 @@ def MultiNetworkTestCase(names):
             services = {}
 
             for name in names:
-                configs[name] = ddcm.utils.load_config("ddcm/test/config/config" + name + ".json")
-                services[name] = ddcm.Service(configs[name], loop)
-                loop.run_until_complete(service[name].start())
+                config = ddcm.utils.load_config("ddcm/test/config/config" + name + ".json")
+                service = ddcm.Service(config, loop)
+                loop.run_until_complete(service.start())
+                
+                services[name] = service
+                configs[name] = config
 
             kwargs = {
                 'loop': loop,
@@ -51,8 +54,8 @@ def MultiNetworkTestCase(names):
 
             ret = loop.run_until_complete(func(*args, **kwargs))
 
-            for service in services:
-                loop.run_until_complete(service.stop())
+            for name in services:
+                loop.run_until_complete(services[name].stop())
 
             return ret
         return _deco

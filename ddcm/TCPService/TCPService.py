@@ -67,6 +67,7 @@ class TCPService(object):
     async def start(self):
         await self.server.start_server()
         self.__logger__.info("Kademlia TCP Service has been started.")
+        self.__logger__.info("Listening on " + self.config["server"]["host"] + ":" + str(self.config["server"]["port"]))
 
     async def stop(self):
         await self.server.stop_server()
