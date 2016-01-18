@@ -46,8 +46,6 @@ class StoreTest(unittest.TestCase):
                 timeout = const.test.STORE_TIMEOUT
             )
 
-            await service.stop()
-
             for event_list in [self.ping_sent, self.ping_recved, self.pong_sent, self.pong_recved, self.pair_sent, self.pair_recved]:
                 event_list.sort()
 

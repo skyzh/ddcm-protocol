@@ -41,8 +41,6 @@ class PingTest(unittest.TestCase):
                 timeout = const.test.PING_TIMEOUT
             )
 
-            await service.stop()
-
             for event_list in [self.ping_sent, self.ping_recved, self.pong_sent, self.pong_recved]:
                 event_list.sort()
 

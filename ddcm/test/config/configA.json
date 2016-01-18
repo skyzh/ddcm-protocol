@@ -1,0 +1,24 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8964
+  },
+  "debug": {
+    "logging": {
+      "level": "DEBUG",
+      "format": "[A][%(levelname)s:%(name)s] %(asctime)-15s %(message)s"
+    },
+    "asyncio": {
+      "enabled": true
+    },
+    "events": {
+      "enabled": true
+    }
+  },
+  "node": {
+    "id": "9e936dd8926a14fe8b8c877f716e7e3909d88db5"
+  },
+  "kbucket": {
+    "ksize": 20
+  }
+}
