@@ -38,12 +38,12 @@ def MultiNetworkTestCase(names):
             services = {}
 
             for name in names:
-                config = ddcm.utils.load_config("ddcm/test/config/config" + name + ".json")
-                service = ddcm.Service(config, loop)
+                _config = ddcm.utils.load_config("ddcm/test/config/config" + name + ".json")
+                service = ddcm.Service(_config, loop)
                 loop.run_until_complete(service.start())
-                
+
                 services[name] = service
-                configs[name] = config
+                configs[name] = _config
 
             kwargs = {
                 'loop': loop,
