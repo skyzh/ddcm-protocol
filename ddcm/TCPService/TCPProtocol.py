@@ -138,41 +138,15 @@ class TCPProtocol(object):
         )
 
     async def _handle_ping(self, echo, remoteNode, data):
-        self.__logger__.info("".join([
-            "PING ",
-            codecs.encode(echo, "hex").decode(),
-            " from ",
-            remoteNode.get_hash_string()
-        ]))
-
         await self.service.event.handle_ping(echo, remoteNode, data)
 
     async def _handle_pong_ping(self, echo, remoteNode, data):
-        self.__logger__.info("".join([
-            "PONG ",
-            codecs.encode(echo, "hex").decode(),
-            " from ",
-            remoteNode.get_hash_string()
-        ]))
         await self.service.event.handle_pong_ping(echo, remoteNode, data)
 
     async def _handle_store(self, echo, remoteNode, data):
-        self.__logger__.info("".join([
-            "STORE ",
-            codecs.encode(echo, "hex").decode(),
-            " from ",
-            remoteNode.get_hash_string()
-        ]))
-
         await self.service.event.handle_store(echo, remoteNode, data)
 
     async def _handle_pong_store(self, echo, remoteNode, data):
-        self.__logger__.info("".join([
-            "PONG_STORE ",
-            codecs.encode(echo, "hex").decode(),
-            " from ",
-            remoteNode.get_hash_string()
-        ]))
         await self.service.event.handle_pong_store(echo, remoteNode, data)
 
 

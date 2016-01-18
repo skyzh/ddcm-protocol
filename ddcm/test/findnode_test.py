@@ -30,6 +30,7 @@ class FindNodeTest(unittest.TestCase):
         queue = self.create_queue(loop, [
             (name, services[name].debugQueue) for name in services
         ])
+        self.pong_recved = {"A": 0, "B": 0, "C": 0}
         while True:
             name, event = await queue.get()
             if event["type"] is ddcm.const.kad.event.SERVICE_SHUTDOWN:
@@ -37,29 +38,43 @@ class FindNodeTest(unittest.TestCase):
             if event["type"] is ddcm.const.kad.event.SEND_PING:
                 pass
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_PING:
-                pass
+                print("[%(name)s] Recved PONG from %(target)s" % {
+                    "name": name,
+                    "target": event["data"]["remoteNode"].get_hash_string()
+                })
+                self.ping_recved[name] += 1
             if event["type"] is ddcm.const.kad.event.SEND_PONG_PING:
                 pass
             if event["type"] is ddcm.const.kad.event.HANDLE_PING:
                 pass
 
-    def FindNodeTestCase(func):
+    def FindNodePingTestCase(func):
         async def _deco(*args, **kwargs):
             ret = await func(*args, **kwargs)
 
             loop, services, configs, self = kwargs['loop'], kwargs['services'], kwargs['configs'], kwargs['self']
+
             await asyncio.wait(
                 [asyncio.ensure_future(
-                    self.handle_events(kwargs['loop'], kwargs['services'])
+                    self.handle_events(loop, services)
                 )],
-                timeout = const.test.PING_TIMEOUT
+                timeout = const.test.PING_MULTI_TIMEOUT
             )
+
+            self.assertEqual(self.pong_recved['A'], const.test.PING_MULTI_COUNT * 3)
+            self.assertEqual(self.pong_recved['B'], const.test.PING_MULTI_COUNT * 3)
+            self.assertEqual(self.pong_recved['C'], const.test.PING_MULTI_COUNT * 3)
 
             return ret
         return _deco
 
     @utils.MultiNetworkTestCase(["A", "B", "C"])
-    @FindNodeTestCase
-    async def test_findNode(self, loop, configs, services):
+    @FindNodePingTestCase
+    async def test_multi_ping(self, loop, configs, services):
         sA, sB, sC = services["A"], services["B"], services["C"]
-        await sA.tcpService.call.ping(sB.tcpService.node.remote)
+        for sX in [sA, sB, sC]:
+            for sY in [sA, sB, sC]:
+                await asyncio.wait([
+                    sX.tcpService.call.ping(sY.tcpService.node.remote)
+                    for i in range(const.test.PING_MULTI_COUNT)
+                ])

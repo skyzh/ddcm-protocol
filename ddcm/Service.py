@@ -32,6 +32,8 @@ class Service(object):
         debug_enabled = service.config["debug"]["events"]
         while True:
             event = await service.queue.get()
+            if debug_enabled:
+                await service.debugQueue.put(event)
             if event["type"] is const.kad.event.SERVICE_SHUTDOWN:
                 break
             elif event["type"] is const.kad.event.HANDLE_PING:
@@ -63,9 +65,6 @@ class Service(object):
                 )
             if event["type"] in const.kad.event.rpc_events_handle:
                 handle_new_node(event["data"]["remoteNode"])
-
-            if debug_enabled:
-                await service.debugQueue.put(event)
 
 
     def __init__(self, config, loop):
