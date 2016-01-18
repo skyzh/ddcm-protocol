@@ -27,3 +27,7 @@ HANDLE_PONG_REDUCE = 19
 
 SERVICE_SHUTDOWN = 21
 SERVICE_START = 22
+
+rpc_events_handle = [
+    8, 9, 10, 11, 18, 12, 13, 14, 15, 19
+]

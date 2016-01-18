@@ -15,7 +15,7 @@ class Route(object):
         for index, bucket in enumerate(self.buckets):
             if bucket.range[0] <= distance < bucket.range[1]:
                 return index
-                
+
     def splitBucket(self, index):
         leftBucket, rightBucket = self.buckets[index].split()
         self.buckets[index] = leftBucket
