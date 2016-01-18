@@ -1,7 +1,7 @@
 {
   "server": {
-    "host": "0.0.0.0",
-    "port": 8963
+    "host": "127.0.0.1",
+    "port": 8990
   },
   "debug": {
     "logging": {
@@ -16,7 +16,7 @@
     }
   },
   "node": {
-    "id": "9e936dd8926a14fe8b8c877f716e7e3909d88db5"
+    "id": "2895bbf42df3ce8cd84733fcd1fd4514fab775da"
   },
   "kbucket": {
     "ksize": 20
