@@ -70,7 +70,8 @@ def main():
 
     loop.run_until_complete(service.start())
 
-    loop.add_reader(sys.stdin, handle_input)
+    if config["client"]["input"]:
+        loop.add_reader(sys.stdin, handle_input)
 
     try:
         loop.run_until_complete(handle_events())
