@@ -76,7 +76,7 @@ class TCPProtocol(object):
             )
         )
 
-    async def _do_pong_findNode(self, writer, echo, remoteId, remoteNodes, remote):
+    async def _do_pong_findNode(self, writer, echo, remoteId, remoteNodes):
         await self._do_send(
             writer,
             self.service.rpc.pack_pong_findNode(
@@ -84,8 +84,7 @@ class TCPProtocol(object):
                 self.service.server.remote,
                 echo,
                 remoteId,
-                remoteNodes,
-                remote
+                remoteNodes
             )
         )
 
@@ -149,12 +148,11 @@ class TCPProtocol(object):
     async def _handle_pong_store(self, echo, remoteNode, data):
         await self.service.event.handle_pong_store(echo, remoteNode, data)
 
-
     async def _handle_findNode(self, echo, remoteNode, data):
-        pass
+        await self.service.event.handle_findNode(echo, remoteNode, data)
 
     async def _handle_pong_findNode(self, echo, remoteNode, data):
-        pass
+        await self.service.event.handle_pong_findNode(echo, remoteNode, data)
 
     async def _handle_findValue(self, echo, remoteNode, data):
         pass

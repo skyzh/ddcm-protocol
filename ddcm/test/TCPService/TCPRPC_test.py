@@ -164,9 +164,12 @@ class TCPRPCTest(unittest.TestCase):
     def test_pack_pong_findNode(self, loop, reader, wsock, tcpService, echo):
         remoteId = ddcm.utils.get_random_node_id()
         remoteNodes = [
-            ddcm.Remote(
-                host = "59.48.23.233",
-                port=random.randrange(1, 65534)
+            ddcm.Node(
+                id = ddcm.utils.get_random_node_id(),
+                remote = ddcm.Remote(
+                    host = "59.48.23.233",
+                    port=random.randrange(1, 65534)
+                )
             ) for i in range(10)
         ]
 
@@ -191,8 +194,9 @@ class TCPRPCTest(unittest.TestCase):
         self.assertEqual(_remoteId, remoteId)
         self.assertEqual(_remoteNodeCount, len(remoteNodes))
         for i in range(len(remoteNodes)):
-            self.assertEqual(_remoteNodes[i].host, remoteNodes[i].host)
-            self.assertEqual(_remoteNodes[i].port, remoteNodes[i].port)
+            self.assertEqual(_remoteNodes[i].id, remoteNodes[i].id)
+            self.assertEqual(_remoteNodes[i].remote.host, remoteNodes[i].remote.host)
+            self.assertEqual(_remoteNodes[i].remote.port, remoteNodes[i].remote.port)
 
     @TestCase
     def test_pack_findValue(self, loop, reader, wsock, tcpService, echo):

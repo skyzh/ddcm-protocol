@@ -79,22 +79,24 @@ class Service(object):
         self.__logger__.info("DDCM Service has been stopped.")
 
     async def find_node(self, id):
-        async def get_ping_future(node, id):
-            return await self.service.tcpService.call.findNode(
+        def get_ping_future(node, id):
+            return self.tcpService.call.findNode(
                 node.remote,
                 id
             )
         longest_distance = 2 ** 160
         alpha = self.config["query"]["alpha"]
-        nodes_to_ping = self.service.route.findNeighbors(ddcm.Node(id))[:alpha]
+        nodes_to_ping = [
+            node for distance, node in self.route.findNeighbors(Node(id))[:alpha]
+        ]
         while True:
-            futures = [
+            futures = []
+            commands = [
                  get_ping_future(node, id) for node in nodes_to_ping
             ]
-            nodes_to_ping = []
-            for f in asyncio.as_completed(
-                futures,
-                timeout = const.kad.query.FIND_NODE_TIMEOUT,
-                loop = self.loop
-            ):
+            for f in asyncio.as_completed(commands):
+                futures.append(await f)
+            for f in asyncio.as_completed(futures):
                 print(await f)
+            while True:
+                pass

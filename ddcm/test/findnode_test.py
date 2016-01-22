@@ -92,4 +92,4 @@ class FindNodeTest(unittest.TestCase):
         for f in asyncio.as_completed(futures):
             await f
         # Finished Ping
-        await sA.find_node(sB.tcpService.node.id)
+        # await sA.find_node(sB.tcpService.node.id)

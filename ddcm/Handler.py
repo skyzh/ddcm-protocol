@@ -3,6 +3,8 @@ import asyncio
 from . import utils
 from . import const
 
+from .Node import Node
+
 class Handler(object):
     def __init__(self):
         self.event_future = {}
@@ -47,11 +49,13 @@ class Handler(object):
                 )
             elif event["type"] is const.kad.event.HANDLE_FIND_NODE:
                 asyncio.ensure_future(
-                    service.tcpService.call.pong_find_node(
+                    service.tcpService.call.pong_findNode(
                         event["data"]["remoteNode"].remote,
                         event["data"]["echo"],
                         event["data"]["data"][0],
-                        service.route.findNeighbors(event["data"]["data"][0])
+                        [node for distance, node in service.route.findNeighbors(Node(
+                            event["data"]["data"]
+                        ))]
                     )
                 )
             if event["type"] in const.kad.event.rpc_events_handle:

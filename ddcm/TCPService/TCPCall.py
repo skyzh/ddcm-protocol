@@ -145,7 +145,7 @@ class TCPCall(object):
             remote: Remote Destination
             echo: Echo Value
             remoteId: Remote ID found
-            remoteNode: Remote Address
+            remoteNodes: Remote Nodes
         Returns:
             None
         """
