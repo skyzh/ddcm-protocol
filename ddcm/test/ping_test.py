@@ -64,6 +64,17 @@ class PingTest(unittest.TestCase):
                 port = config["server"]["port"]
             )) for i in range(const.test.PING_COUNT)]
         )
+
+    @utils.NetworkTestCase
+    async def test_ping_future(self, loop, config, service):
+        await asyncio.wait_for(
+            service.tcpService.call.ping(ddcm.Remote(
+                host = "127.0.0.1",
+                port = config["server"]["port"]
+            )),
+            const.test.PING_TIMEOUT
+        )
+
     """
     @utils.NetworkTestCase
     @PingTestCase

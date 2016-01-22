@@ -5,15 +5,23 @@ from . import const
 
 class Handler(object):
     def __init__(self):
+        self.event_future = {}
+
+    def del_future(self, future):
+        # del self.event_future[future.result()["data"]["echo"]]
         pass
+
     def get_call_future(self, echo):
-        return None
-        
+        future = asyncio.Future()
+        future.add_done_callback(self.del_future)
+        self.event_future[echo] = future
+        return future
+
     async def handle_events(self, service, loop):
-        self.all_event_future = {}
         def handle_new_node(node):
             service.route.addNode(node)
         debug_enabled = service.config["debug"]["events"]
+
         while True:
             event = await service.queue.get()
             if debug_enabled:
@@ -49,5 +57,6 @@ class Handler(object):
                 )
             if event["type"] in const.kad.event.rpc_events_handle:
                 handle_new_node(event["data"]["remoteNode"])
-            if event["type"] in const.kad.event.rpc_events_do:
-                pass
+            if event["type"] in const.kad.event.rpc_events_done:
+                echo = event["data"]["echo"]
+                self.event_future[echo].set_result(event)
