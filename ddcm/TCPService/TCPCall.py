@@ -8,6 +8,9 @@ class TCPCall(object):
         self.loop = loop
         self.service = service
 
+    def get_call_future(self, echo):
+        return self.service.handler.get_call_future(echo)
+
     async def ping(self, remote):
         """Ping
 
@@ -22,6 +25,8 @@ class TCPCall(object):
         writer.close()
 
         await self.service.event.do_ping(remote, echo)
+
+        return self.get_call_future(echo)
 
     async def store(self, remote, key, value):
         """Store
@@ -41,6 +46,8 @@ class TCPCall(object):
 
         await self.service.event.do_store(remote, *data)
 
+        return self.get_call_future(echo)
+
 
     async def findNode(self, remote, remoteId):
         """findNode
@@ -59,6 +66,8 @@ class TCPCall(object):
 
         await self.service.event.do_findNode(remote, *data)
 
+        return self.get_call_future(echo)
+
     async def findValue(self, remote, key):
         """findValue
 
@@ -75,6 +84,8 @@ class TCPCall(object):
         writer.close()
 
         await self.service.event.do_findValue(remote, *data)
+
+        return self.get_call_future(echo)
 
     async def findReduce(self, remote, keyStart, keyEnd):
         """findReduce
@@ -93,6 +104,8 @@ class TCPCall(object):
         writer.close()
 
         await self.service.event.do_reduce(remote, *data)
+
+        return self.get_call_future(echo)
 
     async def pong_ping(self, remote, echo):
         """pong_ping

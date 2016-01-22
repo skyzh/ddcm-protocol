@@ -62,6 +62,7 @@ class TCPService(object):
         self.queue = self.service.queue
         self.storage = self.service.storage
         self.route = Route(self, loop, config["kbucket"]["ksize"], self.node)
+        self.handler = self.service.handler
 
 
     async def start(self):

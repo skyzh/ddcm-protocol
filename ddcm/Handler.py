@@ -6,7 +6,9 @@ from . import const
 class Handler(object):
     def __init__(self):
         pass
-
+    def get_call_future(self, echo):
+        return None
+        
     async def handle_events(self, service, loop):
         self.all_event_future = {}
         def handle_new_node(node):
@@ -47,4 +49,5 @@ class Handler(object):
                 )
             if event["type"] in const.kad.event.rpc_events_handle:
                 handle_new_node(event["data"]["remoteNode"])
-            
+            if event["type"] in const.kad.event.rpc_events_do:
+                pass
