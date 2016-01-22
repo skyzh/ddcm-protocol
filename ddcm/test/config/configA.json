@@ -20,5 +20,8 @@
   },
   "kbucket": {
     "ksize": 20
+  },
+  "query": {
+    "alpha": 3
   }
 }

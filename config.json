@@ -23,5 +23,8 @@
   },
   "client": {
     "input": true
+  },
+  "query": {
+    "alpha": 3
   }
 }

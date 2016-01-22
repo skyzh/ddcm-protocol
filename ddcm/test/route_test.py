@@ -77,7 +77,7 @@ class RouteTest(unittest.TestCase):
         20,
         0
     )
-    
+
     def test_findNeighbors(self, route, selfNode):
         nodes = [self.get_id_node(i) for i in range(2 ** 80, 2 ** 80 + 10)]
         for node in nodes:
