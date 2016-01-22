@@ -22,7 +22,6 @@ def NetworkTestCase(func):
         ret = loop.run_until_complete(func(*args, **kwargs))
 
         loop.run_until_complete(service.stop())
-
         return ret
     return _deco
 
