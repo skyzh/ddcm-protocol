@@ -10,6 +10,7 @@ from .Storage import Storage
 from .Logger import Logger
 from .TCPService import TCPService
 from .Route import Route
+from .Handler import Handler
 
 class Service(object):
     """Service
@@ -25,46 +26,6 @@ class Service(object):
         daemonServer: Kademlia Daemon Server
         queue:        Kademlia Event Queue
     """
-
-    async def handle_events(self, service, loop):
-        def handle_new_node(node):
-            service.route.addNode(node)
-        debug_enabled = service.config["debug"]["events"]
-        while True:
-            event = await service.queue.get()
-            if debug_enabled:
-                await service.debugQueue.put(event)
-            if event["type"] is const.kad.event.SERVICE_SHUTDOWN:
-                break
-            elif event["type"] is const.kad.event.HANDLE_PING:
-                asyncio.ensure_future(
-                    service.tcpService.call.pong_ping(
-                        event["data"]["remoteNode"].remote, event["data"]["echo"]
-                    ),
-                    loop = loop
-                )
-            elif event["type"] is const.kad.event.HANDLE_STORE:
-                await service.storage.store(*event["data"]["data"])
-
-                asyncio.ensure_future(
-                    service.tcpService.call.pong_store(
-                        event["data"]["remoteNode"].remote,
-                        event["data"]["echo"],
-                        event["data"]["data"][0]
-                    ),
-                    loop = loop
-                )
-            elif event["type"] is const.kad.event.HANDLE_FIND_NODE:
-                asyncio.ensure_future(
-                    service.tcpService.call.pong_find_node(
-                        event["data"]["remoteNode"].remote,
-                        event["data"]["echo"],
-                        event["data"]["data"][0],
-                        service.route.findNeighbors(event["data"]["data"][0])
-                    )
-                )
-            if event["type"] in const.kad.event.rpc_events_handle:
-                handle_new_node(event["data"]["remoteNode"])
 
 
     def __init__(self, config, loop):
@@ -84,6 +45,7 @@ class Service(object):
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
 
+        self.handler = Handler()
 
         self.storage = Storage()
         self.route = Route(
@@ -93,7 +55,6 @@ class Service(object):
             int.from_bytes(utils.dump_node_hex(config["node"]["id"]), byteorder="big")
         )
         self.tcpService = TCPService(config, self, loop)
-
 
     async def start(self):
         await self.tcpService.start()
@@ -105,7 +66,7 @@ class Service(object):
             "data": None
         })
 
-        asyncio.ensure_future(self.handle_events(self, self.loop))
+        asyncio.ensure_future(self.handler.handle_events(self, self.loop))
 
     async def stop(self):
         await self.queue.put({
