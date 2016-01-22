@@ -13,7 +13,7 @@ def commonPrefix(data):
     return os.path.commonprefix([bits(item) for item in data])
 
 def get_echo_bytes():
-    return bytes(random.getrandbits(8) for i in range(4))
+    return bytes(random.getrandbits(8) for i in range(20))
 
 def get_random_node_id():
     return bytes(random.getrandbits(8) for i in range(20))
