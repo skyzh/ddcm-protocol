@@ -67,13 +67,18 @@ class PingTest(unittest.TestCase):
 
     @utils.NetworkTestCase
     async def test_ping_future(self, loop, config, service):
-        await asyncio.wait_for(
-            service.tcpService.call.ping(ddcm.Remote(
+        result = await asyncio.wait_for(
+            await service.tcpService.call.ping(ddcm.Remote(
                 host = "127.0.0.1",
                 port = config["server"]["port"]
             )),
-            const.test.PING_TIMEOUT
+            timeout = const.test.PING_TIMEOUT,
+            loop = loop
         )
+        self.assertEqual(result["type"], ddcm.const.kad.event.HANDLE_PONG_PING)
+        node = result["data"]["remoteNode"]
+        self.assertEqual(node.remote.host, service.tcpService.node.remote.host)
+        self.assertEqual(node.remote.port, service.tcpService.node.remote.port)
 
     """
     @utils.NetworkTestCase

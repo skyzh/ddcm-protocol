@@ -9,7 +9,7 @@
       "format": "[%(levelname)s:%(name)s] %(asctime)-15s %(message)s"
     },
     "asyncio": {
-      "enabled": true
+      "enabled": false
     },
     "events": {
       "enabled": true

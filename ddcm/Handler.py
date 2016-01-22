@@ -13,7 +13,7 @@ class Handler(object):
 
     def get_call_future(self, echo):
         future = asyncio.Future()
-        future.add_done_callback(self.del_future)
+        # future.add_done_callback(self.del_future)
         self.event_future[echo] = future
         return future
 
