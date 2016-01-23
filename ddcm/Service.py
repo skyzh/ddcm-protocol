@@ -78,25 +78,38 @@ class Service(object):
         await self.tcpService.stop()
         self.__logger__.info("DDCM Service has been stopped.")
 
-    async def find_node(self, id):
+    async def find_node(self, remoteId):
         def get_ping_future(node, id):
             return self.tcpService.call.findNode(
                 node.remote,
-                id
+                remoteId
             )
         longest_distance = 2 ** 160
+        __longest_distance = 2 ** 160
         alpha = self.config["query"]["alpha"]
-        nodes_to_ping = [
-            node for distance, node in self.route.findNeighbors(Node(id))[:alpha]
-        ]
+        neighbors = self.route.findNeighbors(Node(remoteId))[:alpha]
+        nodes_to_ping = {}
+        for distance, node in neighbors:
+            if distance == 0:
+                return node
+            nodes_to_ping[node.id] = node
         while True:
+            longest_distance = __longest_distance
             futures = []
             commands = [
-                 get_ping_future(node, id) for node in nodes_to_ping
+                 get_ping_future(nodes_to_ping[key], remoteId) for key in nodes_to_ping
             ]
+            nodes_to_ping.clear()
             for f in asyncio.as_completed(commands):
                 futures.append(await f)
             for f in asyncio.as_completed(futures):
-                print(await f)
-            while True:
-                pass
+                _remoteId, count, remoteNodes = (await f)["data"]["data"]
+                for remoteNode in remoteNodes:
+                    if remoteNode.id == remoteId:
+                        return remoteNode
+                    if remoteNode.distance(remoteId) <= longest_distance:
+                        nodes_to_ping[remoteNode.id] = remoteNode
+                        __longest_distance = min(
+                            __longest_distance,
+                            remoteNode.distance(id)
+                        )

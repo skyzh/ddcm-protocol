@@ -52,7 +52,7 @@ class Handler(object):
                     service.tcpService.call.pong_findNode(
                         event["data"]["remoteNode"].remote,
                         event["data"]["echo"],
-                        event["data"]["data"][0],
+                        event["data"]["data"],
                         [node for distance, node in service.route.findNeighbors(Node(
                             event["data"]["data"]
                         ))]
