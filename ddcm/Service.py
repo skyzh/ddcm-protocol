@@ -89,16 +89,22 @@ class Service(object):
         alpha = self.config["query"]["alpha"]
         neighbors = self.route.findNeighbors(Node(remoteId))[:alpha]
         nodes_to_ping = {}
+        queryNode = Node(remoteId)
+        nodes_queried = []
         for distance, node in neighbors:
             if distance == 0:
                 return node
             nodes_to_ping[node.id] = node
         while True:
+            if len(nodes_to_ping) is 0:
+                return None
             longest_distance = __longest_distance
             futures = []
             commands = [
-                 get_ping_future(nodes_to_ping[key], remoteId) for key in nodes_to_ping
+                 get_ping_future(nodes_to_ping[key], remoteId)
+                 for key in nodes_to_ping
             ]
+            nodes_queried.extend([key for key in nodes_to_ping])
             nodes_to_ping.clear()
             for f in asyncio.as_completed(commands):
                 futures.append(await f)
@@ -107,9 +113,10 @@ class Service(object):
                 for remoteNode in remoteNodes:
                     if remoteNode.id == remoteId:
                         return remoteNode
-                    if remoteNode.distance(remoteId) <= longest_distance:
+                    if remoteNode.distance(queryNode.hash) <= longest_distance and not(remoteNode.id in nodes_queried):
                         nodes_to_ping[remoteNode.id] = remoteNode
                         __longest_distance = min(
                             __longest_distance,
-                            remoteNode.distance(id)
+                            remoteNode.distance(remoteNode.hash)
                         )
+            longest_distance = __longest_distance
