@@ -94,7 +94,6 @@ class FindNodeTest(unittest.TestCase):
         for f in asyncio.as_completed(futures):
             await f
         # Finished Ping
-        result = await sB.find_node(sA.tcpService.node.id)
-        print(result)
-        result = await sC.find_node(sA.tcpService.node.id)
-        print(result)
+        result = await sB.find_node(sC.tcpService.node.id)
+        self.assertEqual(result.id, sC.tcpService.node.id)
+        self.assertEqual(result.remote.port, sC.tcpService.node.remote.port)
