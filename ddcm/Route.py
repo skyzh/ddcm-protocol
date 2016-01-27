@@ -63,8 +63,8 @@ class Route(object):
         kSize = kSize or self.ksize
         nodes = []
         __count = 0
-        for neighbor in iter_nodes(self.getBucket(node.hash)):
-            if neighbor.id != node.id and (not neighbor.id in exclude):
+        for neighbor in iter_nodes(self.getBucket(node.distance(self.selfNode))):
+            if neighbor.id != self.selfNode and (not neighbor.id in exclude):
                 heapq.heappush(nodes, (neighbor.distance(self.selfNode), neighbor))
                 __count += 1
             if len(nodes) is kSize:

@@ -94,6 +94,7 @@ class Service(object):
             if distance == 0:
                 return node
             nodes_to_ping[node.id] = node
+        print(nodes_to_ping)
         nodes_queried = []
 
         while True:
