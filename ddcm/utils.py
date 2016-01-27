@@ -26,3 +26,14 @@ def load_config(path):
 
 def dump_node_hex(data = None):
     return codecs.decode(data.encode(), "hex")
+
+class DelayList(object):
+    def __init__(self, data = []):
+        self.data = data
+        self.iter = iter(self.data)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.iter.__next__()

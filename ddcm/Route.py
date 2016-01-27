@@ -42,7 +42,7 @@ class Route(object):
             #TODO: Check if the first node is online
             pass
 
-    def findNeighbors(self, node, kSize=None, exclude=None):
+    def findNeighbors(self, node, kSize = None, exclude = []):
         def iter_nodes(bucketIndex):
             def iter_index(startIndex, endIndex, currentIndex):
                 __index = currentIndex
@@ -62,7 +62,6 @@ class Route(object):
 
         kSize = kSize or self.ksize
         nodes = []
-        exclude = exclude or []
         __count = 0
         for neighbor in iter_nodes(self.getBucket(node.hash)):
             if neighbor.id != node.id and (not neighbor.id in exclude):

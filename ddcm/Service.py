@@ -79,35 +79,42 @@ class Service(object):
         self.__logger__.info("DDCM Service has been stopped.")
 
     async def find_node(self, remoteId):
-        def get_ping_future(node, id):
+        # Check if node is already in Route
+        alpha = self.config["query"]["alpha"]
+        queryNode = Node(remoteId)
+
+        def get_findNode_future(node, id):
             return self.tcpService.call.findNode(
                 node.remote,
                 remoteId
             )
-        longest_distance = 2 ** 160
-        __longest_distance = 2 ** 160
-        alpha = self.config["query"]["alpha"]
-        neighbors = self.route.findNeighbors(Node(remoteId))[:alpha]
+        longest_distance_list = utils.DelayList([2 ** 160])
         nodes_to_ping = {}
-        queryNode = Node(remoteId)
-        nodes_queried = []
-        for distance, node in neighbors:
+        for distance, node in self.route.findNeighbors(queryNode)[:alpha]:
             if distance == 0:
                 return node
             nodes_to_ping[node.id] = node
+        nodes_queried = []
+
         while True:
-            if len(nodes_to_ping) is 0:
+            if not(nodes_to_ping):
                 return None
-            longest_distance = __longest_distance
-            futures = []
+
+            longest_distance = longest_distance_list.__next__()
+
+            node_to_query = list(nodes_to_ping.items())[:alpha]
             commands = [
-                 get_ping_future(nodes_to_ping[key], remoteId)
-                 for key in nodes_to_ping
+                 get_findNode_future(node, remoteId)
+                 for (key, node) in node_to_query
             ]
-            nodes_queried.extend([key for key in nodes_to_ping])
+            nodes_queried.extend([key for key, node in node_to_query])
             nodes_to_ping.clear()
+
+            futures = []
             for f in asyncio.as_completed(commands):
                 futures.append(await f)
+
+            __longest_distance = 2 ** 160
             for f in asyncio.as_completed(futures):
                 _remoteId, count, remoteNodes = (await f)["data"]["data"]
                 for remoteNode in remoteNodes:
@@ -119,4 +126,4 @@ class Service(object):
                             __longest_distance,
                             remoteNode.distance(remoteNode.hash)
                         )
-            longest_distance = __longest_distance
+            longest_distance_list.data.append(__longest_distance)

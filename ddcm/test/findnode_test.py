@@ -85,12 +85,16 @@ class FindNodeTest(unittest.TestCase):
         futures = []
         sA, sB, sC = services["A"], services["B"], services["C"]
         futures.append(
-            await sA.tcpService.call.ping(sB.tcpService.node.remote)
+            await sB.tcpService.call.ping(sA.tcpService.node.remote)
         )
         futures.append(
-            await sA.tcpService.call.ping(sC.tcpService.node.remote)
+            await sC.tcpService.call.ping(sA.tcpService.node.remote)
         )
+
         for f in asyncio.as_completed(futures):
             await f
         # Finished Ping
-        await sC.find_node(sB.tcpService.node.id)
+        result = await sB.find_node(sA.tcpService.node.id)
+        print(result)
+        result = await sC.find_node(sA.tcpService.node.id)
+        print(result)
