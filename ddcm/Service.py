@@ -78,6 +78,23 @@ class Service(object):
         await self.tcpService.stop()
         self.__logger__.info("DDCM Service has been stopped.")
 
+    async def store(self, key, value):
+        def get_store_future(node):
+            return self.tcpService.call.store(
+                node.remote,
+                key,
+                value
+            )
+        queryNode = Node(key)
+        futures = []
+        commands = [get_store_future(node) for distance, node in self.route.findNeighbors(queryNode)]
+        for f in asyncio.as_completed(commands):
+            futures.append(await f)
+        for f in asyncio.as_completed(futures):
+            await f
+        await self.storage.store(key, value)
+        return True
+
     async def find_node(self, remoteId):
         # Check if node is already in Route
         alpha = self.config["query"]["alpha"]

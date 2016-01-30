@@ -4,7 +4,7 @@ class Storage(object):
     An Object storing key-value pairs
     """
     def __init__(self):
-        self.data = dict()
+        self.data = {}
 
     async def store(self, key, value):
         self.data[key] = value
@@ -13,4 +13,4 @@ class Storage(object):
         return self.data[key]
 
     async def exist(self, key):
-        return key in self.data.keys()
+        return key in self.data

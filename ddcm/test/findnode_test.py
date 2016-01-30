@@ -39,10 +39,10 @@ class FindNodeTest(unittest.TestCase):
             if event["type"] is ddcm.const.kad.event.SEND_PING:
                 pass
             if event["type"] is ddcm.const.kad.event.HANDLE_PONG_PING:
-                print("[%(name)s] Recved PONG from %(target)s" % {
+                """print("[%(name)s] Recved PONG from %(target)s" % {
                     "name": name,
                     "target": event["data"]["remoteNode"].get_hash_string()
-                })
+                })"""
                 self.pong_recved[name] += 1
                 pong_recved_count += 1
             if event["type"] is ddcm.const.kad.event.SEND_PONG_PING:
