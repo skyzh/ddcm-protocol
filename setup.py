@@ -11,6 +11,7 @@ setup(
       url='https://github.com/SkyZH/ddcm-protocol',
       packages=[
             "ddcm",
+            "ddcm.const",
             "ddcm.const.kad",
             "ddcm.TCPService"
       ],
