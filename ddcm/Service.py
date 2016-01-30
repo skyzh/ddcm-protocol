@@ -95,6 +95,21 @@ class Service(object):
         await self.storage.store(key, value)
         return True
 
+    async def find_value(self, key):
+        def get_findValue_future(node):
+            return self.tcpService.call.findValue(
+                node.remote,
+                key
+            )
+        queryNode = Node(key)
+        futures = []
+        commands = [get_findValue_future(node) for distance, node in self.route.findNeighbors(queryNode)]
+        for f in asyncio.as_completed(commands):
+            futures.append(await f)
+        for f in asyncio.as_completed(futures):
+            return (await f)["data"]["data"]
+        return None
+
     async def find_node(self, remoteId):
         # Check if node is already in Route
         alpha = self.config["query"]["alpha"]

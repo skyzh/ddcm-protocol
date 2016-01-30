@@ -58,6 +58,15 @@ class Handler(object):
                         ))]
                     )
                 )
+            elif event["type"] is const.kad.event.HANDLE_FIND_VALUE:
+                asyncio.ensure_future(
+                    service.tcpService.call.pong_findValue(
+                        event["data"]["remoteNode"].remote,
+                        event["data"]["echo"],
+                        event["data"]["data"],
+                        await service.storage.get(event["data"]["data"])
+                    )
+                )
             if event["type"] in const.kad.event.rpc_events_handle:
                 handle_new_node(event["data"]["remoteNode"])
             if event["type"] in const.kad.event.rpc_events_done:

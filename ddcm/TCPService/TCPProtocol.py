@@ -155,10 +155,10 @@ class TCPProtocol(object):
         await self.service.event.handle_pong_findNode(echo, remoteNode, data)
 
     async def _handle_findValue(self, echo, remoteNode, data):
-        pass
+        await self.service.event.handle_findValue(echo, remoteNode, data)
 
     async def _handle_pong_findValue(self, echo, remoteNode, data):
-        pass
+        await self.service.event.handle_pong_findValue(echo, remoteNode, data)
 
     async def _handle_reduce(self, echo, remoteNode, data):
         pass

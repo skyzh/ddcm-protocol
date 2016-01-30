@@ -89,3 +89,28 @@ class TCPEvent(object):
             "echo": echo,
             "data": data
         })
+
+    async def do_pong_findValue(self, remote, echo, key, value):
+        await self.add_event(const.kad.event.SEND_PONG_FIND_VALUE, {
+            "remote": remote,
+            "echo": echo,
+            "data": (key, value)
+        })
+    async def do_findValue(self, remote, echo, key):
+        await self.add_event(const.kad.event.SEND_FIND_VALUE, {
+            "remote": remote,
+            "echo": echo,
+            "data": key
+        })
+    async def handle_pong_findValue(self, echo, remoteNode, data):
+        await self.add_event(const.kad.event.HANDLE_PONG_FIND_VALUE, {
+            "remoteNode": remoteNode,
+            "echo": echo,
+            "data": data
+        })
+    async def handle_findValue(self, echo, remoteNode, data):
+        await self.add_event(const.kad.event.HANDLE_FIND_VALUE, {
+            "remoteNode": remoteNode,
+            "echo": echo,
+            "data": data
+        })
