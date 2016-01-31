@@ -31,8 +31,7 @@ class FindValueTest(unittest.TestCase):
         resultB = await sB.find_value(key)
         resultC = await sC.find_value(key)
         def check_result(result):
-            self.assertEqual(result[0], key)
-            self.assertEqual(result[1], value)
+            self.assertEqual(result, value)
         check_result(resultA)
         check_result(resultB)
-        check_result(resultC)    
+        check_result(resultC)

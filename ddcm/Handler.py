@@ -29,7 +29,9 @@ class Handler(object):
                 await service.debugQueue.put(event)
             if event["type"] is const.kad.event.SERVICE_SHUTDOWN:
                 break
-            elif event["type"] is const.kad.event.HANDLE_PING:
+            if event["type"] in const.kad.event.rpc_events_handle:
+                handle_new_node(event["data"]["remoteNode"])
+            if event["type"] is const.kad.event.HANDLE_PING:
                 asyncio.ensure_future(
                     service.tcpService.call.pong_ping(
                         event["data"]["remoteNode"].remote, event["data"]["echo"]
@@ -67,8 +69,6 @@ class Handler(object):
                         await service.storage.get(event["data"]["data"])
                     )
                 )
-            if event["type"] in const.kad.event.rpc_events_handle:
-                handle_new_node(event["data"]["remoteNode"])
             if event["type"] in const.kad.event.rpc_events_done:
                 echo = event["data"]["echo"]
                 self.event_future[echo].set_result(event)

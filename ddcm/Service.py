@@ -1,4 +1,7 @@
 import asyncio
+import hashlib
+import json
+import time
 
 from . import utils
 from . import const
@@ -44,6 +47,7 @@ class Service(object):
 
         self.logger = Logger(config["debug"]["logging"])
         self.__logger__ = self.logger.get_logger("Service")
+        self.__hasher__ = hashlib.sha1()
 
         self.handler = Handler()
 
@@ -96,6 +100,8 @@ class Service(object):
         return True
 
     async def find_value(self, key):
+        if await self.storage.exist(key):
+            return await self.storage.get(key)
         def get_findValue_future(node):
             return self.tcpService.call.findValue(
                 node.remote,
@@ -159,3 +165,22 @@ class Service(object):
                             remoteNode.distance(remoteNode.hash)
                         )
             longest_distance_list.data.append(__longest_distance)
+
+    async def get_latest_commit(self):
+        commit_id = (await self.find_value(b"\x00" * 20))
+        if commit_id == None:
+            return None, None
+        commit_data = (await self.find_value(commit_id))
+        return commit_id, json.loads(commit_data.decode('utf-8'))
+
+    async def commit(self, data):
+        commit_data = json.dumps({
+            "data": data,
+            "lstcommit": [],
+            "time": int(time.time()),
+            "author": self.config["node"]["id"]
+        }).encode('utf-8')
+        self.__hasher__.update(commit_data)
+        commit_id = self.__hasher__.digest()
+        await self.store(commit_id, commit_data)
+        await self.store(b"\x00" * 20, commit_id)

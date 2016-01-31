@@ -72,4 +72,4 @@ class TCPService(object):
 
     async def stop(self):
         await self.server.stop_server()
-        self.__logger__.info("Kademlia TCP Service has been stopped.")
+        self.__logger__.info("DDCM TCP Service has been stopped.")
