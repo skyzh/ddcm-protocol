@@ -1,6 +1,6 @@
 {
   "server": {
-    "host": "192.168.1.141",
+    "host": "192.168.0.105",
     "port": 8969
   },
   "debug": {
@@ -20,5 +20,8 @@
   },
   "kbucket": {
     "ksize": 20
+  },
+  "client": {
+      "input": false
   }
 }
