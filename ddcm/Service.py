@@ -113,7 +113,7 @@ class Service(object):
         for f in asyncio.as_completed(commands):
             futures.append(await f)
         for f in asyncio.as_completed(futures):
-            return (await f)["data"]["data"]
+            return (await f)["data"]["data"][1]
         return None
 
     async def find_node(self, remoteId):
