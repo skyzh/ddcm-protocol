@@ -27,6 +27,9 @@ def load_config(path):
 def dump_node_hex(data = None):
     return codecs.decode(data.encode(), "hex")
 
+def get_hash_string(bytes_seq):
+    return codecs.encode(bytes_seq, "hex").decode()
+    
 class DelayList(object):
     def __init__(self, data = []):
         self.data = data

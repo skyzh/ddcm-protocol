@@ -82,7 +82,7 @@ class Service(object):
         await self.tcpService.stop()
         self.__logger__.info("DDCM Service has been stopped.")
 
-    async def store(self, key, value):
+    async def store(self, key, value, cached = True):
         def get_store_future(node):
             return self.tcpService.call.store(
                 node.remote,
@@ -96,11 +96,16 @@ class Service(object):
             futures.append(await f)
         for f in asyncio.as_completed(futures):
             await f
-        await self.storage.store(key, value)
+        if cached:
+            await self.storage.store(key, value)
         return True
 
     async def find_value(self, key):
         if await self.storage.exist(key):
+            self.__logger__.info("%(key)s - %(value)s from Local Storage" % {
+                "key": utils.get_hash_string(key),
+                "value": await self.storage.get(key) if key == b"\x00" * 20 else ""
+            })
             return await self.storage.get(key)
         def get_findValue_future(node):
             return self.tcpService.call.findValue(
@@ -173,7 +178,7 @@ class Service(object):
         commit_data = (await self.find_value(commit_id))
         return commit_id, json.loads(commit_data.decode('utf-8'))
 
-    async def commit(self, data):
+    async def commit(self, data, cached = False):
         commit_data = json.dumps({
             "data": data,
             "lstcommit": [],
@@ -183,4 +188,5 @@ class Service(object):
         self.__hasher__.update(commit_data)
         commit_id = self.__hasher__.digest()
         await self.store(commit_id, commit_data)
-        await self.store(b"\x00" * 20, commit_id)
+        await self.store(b"\x00" * 20, commit_id, cached)
+        return commit_id
