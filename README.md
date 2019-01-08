@@ -16,4 +16,10 @@ BSD-Clause-3
 
 ## Test
 
-    ./run_test.sh
+```bash
+./run_test.sh
+```
+
+## Example
+
+Word count [ddcm-word-count](https://github.com/SkyZH/ddcm-word-count)
