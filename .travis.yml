@@ -1,6 +1,5 @@
 language: python
 python:
   - "3.5"
-  - "3.5.1"
 script: ./run_test.sh
 after_script: python3 setup.py sdist
