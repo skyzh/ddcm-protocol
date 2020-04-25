@@ -23,3 +23,7 @@ BSD-Clause-3
 ## Example
 
 Word count [ddcm-word-count](https://github.com/SkyZH/ddcm-word-count)
+
+## Stories behind DDCM
+
+This is a project for innovation competition in Shanghai. I proposed DDCM protocol when I was a 10th grade high school student. For stories behind this project, refer to [#8](https://github.com/skyzh/ddcm-protocol/issues/8)
